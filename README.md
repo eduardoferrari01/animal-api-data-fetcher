@@ -1,1 +1,1 @@
-# snakes-api
+# snake-api
