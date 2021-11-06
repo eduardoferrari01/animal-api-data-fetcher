@@ -3,6 +3,7 @@ package br.com.snake.api.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,8 @@ public class SnakeController {
 	private static final Logger LOG = LoggerFactory.getLogger(SnakeController.class);
 	@Autowired
 	private RestTemplate restTemplate;
+	@Autowired
+	private Environment env;
 	
 	@PostMapping(value = "/information", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
 	public ResponseEntity<SnakeTo> information(@RequestParam("file") MultipartFile file) {
@@ -34,7 +37,7 @@ public class SnakeController {
 		try {
 
 			LOG.info("Image received {}", file.getOriginalFilename());
-			SendImage sendImage = new SendImage(restTemplate);
+			SendImage sendImage = new SendImage(restTemplate, env);
 			String label = sendImage.post(file.getBytes()).getLabel();
 			SnakeTo snakeTo = snakeService.findByLabel(label);
 			LOG.info("Reply sent to customer");

@@ -2,6 +2,7 @@ package br.com.snake.api.integration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,23 +19,26 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class SendImage {
+public class SendImage implements ISendImage{
 
 	private RestTemplate restTemplate;
 	private HttpHeaders headers;
-	// neural-network-api router
-	private String host = "http://127.0.0.1:8000/snake/classify/";
+	//cnn host
+	private String host = "";
+	private String property = "integration.cnn.url";
 	private ObjectMapper objectMapper;
 	private static final Logger LOG = LoggerFactory.getLogger(SendImage.class);
-
-	public SendImage(RestTemplate restTemplate) {
+	
+	public SendImage(RestTemplate restTemplate, Environment env) {
 		this.restTemplate = restTemplate;
+		this.host = env.getProperty(property);
 		this.headers = new HttpHeaders();
 		this.headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 		this.objectMapper = new ObjectMapper();
 
 	}
 
+	@Override
 	public IntegrationResponse post(byte[] bytes) throws IntegrationResponseException {
 
 		MultiValueMap<String, String> fileMap = new LinkedMultiValueMap<>();
