@@ -27,16 +27,7 @@ public class SnakeService {
 
 		LOG.info("{} found!!!", label);
 
-		return new SnakeBuilder(snake)
-				.accidentSymptom()
-				.antivenom()
-				.characteristics()
-				.conservationState()
-				.etymology()
-				.genre()
-				.popularNames()
-				.species()
-				.venomous()
-				.imagem().builder();
+		return new SnakeBuilder(snake).builder();
+				
 	}
 }

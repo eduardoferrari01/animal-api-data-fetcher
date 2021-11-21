@@ -18,67 +18,25 @@ public class SnakeBuilder {
 		this.snakeTo = new SnakeTo();
 	}
 
-	public SnakeBuilder accidentSymptom() {
-		snakeTo.setAccidentSymptom(snake.getAccidentSymptom().getDescription());
-		return this;
-	}
-
-	public SnakeBuilder antivenom() {
-
-		snakeTo.setAntivenom(snake.getAntivenom());
-		return this;
-	}
-
-	public SnakeBuilder venomous() {
-
-		snakeTo.setVenomous(snake.getVenomous());
-		return this;
-	}
-
-	public SnakeBuilder species() {
-
-		snakeTo.setSpecies(snake.getSpecies());
-		return this;
-	}
-
-	public SnakeBuilder popularNames() {
-
-		snakeTo.setPopularNames(snake.getPopularNames());
-		return this;
-	}
-
-	public SnakeBuilder genre() {
-
-		snakeTo.setGenre(snake.getGenre());
-		return this;
-	}
-
-	public SnakeBuilder etymology() {
-		snakeTo.setEtymology(snake.getEtymology());
-		return this;
-	}
-
-	public SnakeBuilder conservationState() {
-
-		snakeTo.setConservationState(snake.getConservationState());
-		return this;
-	}
-
-	public SnakeBuilder characteristics() {
-
-		snakeTo.setCharacteristics(snake.getCharacteristics());
-		return this;
-	}
-
-	public SnakeBuilder imagem() {
-		
-		snakeTo.setUrlImage(snake.getUrlImage());
-		return this;
-	}
-	
 	public SnakeTo builder() {
-
+		
+		snakeTo.setAccidentSymptom(snake.getAccidentSymptom().getDescription());
+		snakeTo.setAntivenom(snake.getAntivenom());
+		snakeTo.setVenomous(snake.getVenomous());
+		snakeTo.setCanCauseSeriousAccident(snake.getCanCauseSeriousAccident());
+		snakeTo.setSpecies(snake.getSpecies());
+		snakeTo.setPopularNames(String.join(", ", snake.getPopularNames()));
+		snakeTo.setFamily(snake.getFamily());
+		snakeTo.setGenre(snake.getGenre());
+		snakeTo.setDentition(snake.getDentition());
+		snakeTo.setHabitat(snake.getHabitat());
+		snakeTo.setEtymology(snake.getEtymology());
+		snakeTo.setConservationState(snake.getConservationState());
+		snakeTo.setCharacteristics(snake.getCharacteristics());
+		snakeTo.setUrlImage(snake.getUrlImage());
+		
 		LOG.info("DTO created: {}", snakeTo);
+		
 		return snakeTo;
 	}
 }

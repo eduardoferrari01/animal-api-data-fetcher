@@ -13,17 +13,7 @@ public class SnakeUtil {
 
 	public static SnakeTo createSnakeDto() {
 		
-		return new SnakeBuilder(createSnakeDomain())
-				.accidentSymptom()
-				.antivenom()
-				.characteristics()
-				.conservationState()
-				.etymology()
-				.genre()
-				.popularNames()
-				.species()
-				.venomous()
-				.imagem().builder();
+		return new SnakeBuilder(createSnakeDomain()).builder();
 	}
 	
 	public static Snake createSnakeDomain() {
