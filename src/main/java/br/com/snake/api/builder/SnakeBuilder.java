@@ -76,12 +76,6 @@ public class SnakeBuilder {
 		return this;
 	}
 	
-	public SnakeBuilder imageGeographicDistribution() {
-		
-		snakeTo.setUrlImageGeographicDistribution(snake.getUrlImageGeographicDistribution());
-		return this;
-	}
-	
 	public SnakeTo builder() {
 
 		LOG.info("DTO created: {}", snakeTo);

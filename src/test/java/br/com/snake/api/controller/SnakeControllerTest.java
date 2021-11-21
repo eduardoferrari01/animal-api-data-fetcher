@@ -150,7 +150,6 @@ public class SnakeControllerTest {
 		Assertions.assertEquals(snakteDto.getGenre(), snakeToResponse.getGenre());
 		Assertions.assertEquals(snakteDto.getSpecies(), snakeToResponse.getSpecies());
 		Assertions.assertEquals(snakteDto.getUrlImage(), snakeToResponse.getUrlImage());
-		Assertions.assertEquals(snakteDto.getUrlImageGeographicDistribution(),snakeToResponse.getUrlImageGeographicDistribution());
 		Assertions.assertEquals(snakteDto.getVenomous(), snakeToResponse.getVenomous());
 		Assertions.assertFalse(snakteDto.getPopularNames().isEmpty());
 		Assertions.assertEquals(snakteDto.getPopularNames(), snakeToResponse.getPopularNames());

@@ -14,7 +14,6 @@ public class SnakeTo {
 	private String species;
 	private String genre;
 	private String urlImage;
-	private String urlImageGeographicDistribution;
 	private String characteristics;
 	private String accidentSymptom;
 	
@@ -79,19 +78,12 @@ public class SnakeTo {
 	public void setUrlImage(String urlImage) {
 		this.urlImage = urlImage;
 	}
-	public String getUrlImageGeographicDistribution() {
-		return urlImageGeographicDistribution;
-	}
-	public void setUrlImageGeographicDistribution(String urlImageGeographicDistribution) {
-		this.urlImageGeographicDistribution = urlImageGeographicDistribution;
-	}
 	
 	@Override
 	public String toString() {
 		return "SnakeTo [popularNames=" + popularNames + ", conservationState=" + conservationState + ", antivenom="
 				+ antivenom + ", etymology=" + etymology + ", venomous=" + venomous + ", species=" + species
-				+ ", genre=" + genre + ", urlImage=" + urlImage + ", urlImageGeographicDistribution="
-				+ urlImageGeographicDistribution + ", characteristics=" + characteristics + ", accidentSymptom="
+				+ ", genre=" + genre + ", urlImage=" + urlImage  + ", characteristics=" + characteristics + ", accidentSymptom="
 				+ accidentSymptom + "]";
 	}
 }

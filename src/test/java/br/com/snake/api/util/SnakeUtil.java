@@ -23,8 +23,7 @@ public class SnakeUtil {
 				.popularNames()
 				.species()
 				.venomous()
-				.imagem()
-				.imageGeographicDistribution().builder();
+				.imagem().builder();
 	}
 	
 	public static Snake createSnakeDomain() {
@@ -45,7 +44,6 @@ public class SnakeUtil {
 		snake.setVenomous(true);
 		snake.setAntivenom("Antiveneno polivalente");
 		snake.setUrlImage("localhost");
-		snake.setUrlImageGeographicDistribution("localhost");
 		return snake;
 	}
 }

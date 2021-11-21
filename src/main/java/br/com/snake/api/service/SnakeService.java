@@ -37,7 +37,6 @@ public class SnakeService {
 				.popularNames()
 				.species()
 				.venomous()
-				.imagem()
-				.imageGeographicDistribution().builder();
+				.imagem().builder();
 	}
 }

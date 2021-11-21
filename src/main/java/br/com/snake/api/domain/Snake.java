@@ -22,8 +22,7 @@ public class Snake {
 	private String characteristics;
 	private AccidentSymptom accidentSymptom;
 	private String urlImage;
-	private String urlImageGeographicDistribution;
-	
+	 
 	public String getId() {
 		return id;
 	}
@@ -97,12 +96,6 @@ public class Snake {
 	}
 	public void setUrlImage(String urlImage) {
 		this.urlImage = urlImage;
-	}
-	public String getUrlImageGeographicDistribution() {
-		return urlImageGeographicDistribution;
-	}
-	public void setUrlImageGeographicDistribution(String urlImageGeographicDistribution) {
-		this.urlImageGeographicDistribution = urlImageGeographicDistribution;
 	}
 	
 	@Override
