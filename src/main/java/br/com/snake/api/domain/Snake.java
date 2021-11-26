@@ -1,5 +1,6 @@
 package br.com.snake.api.domain;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -7,8 +8,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
-public class Snake {
+public class Snake implements Serializable{
 
+	private static final long serialVersionUID = 3651156997181600619L;
 	@Id
 	private String id;
 	private String label;
