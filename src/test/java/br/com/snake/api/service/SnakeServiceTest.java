@@ -55,8 +55,8 @@ public class SnakeServiceTest {
 		Assertions.assertEquals(snake.getSpecies(), snakeTo.getSpecies());
 		Assertions.assertEquals(snake.getUrlImage(), snakeTo.getUrlImage());
 		Assertions.assertEquals(snake.getVenomous(), snakeTo.getVenomous());
-		Assertions.assertFalse(snakeTo.getPopularNames().isEmpty());
-		Assertions.assertEquals(snake.getPopularNames(),snakeTo.getPopularNames());
+		String popularNames = String.join(", ", snake.getPopularNames());
+		Assertions.assertEquals(popularNames, snakeTo.getPopularNames());
 	}
 	
 	@Test

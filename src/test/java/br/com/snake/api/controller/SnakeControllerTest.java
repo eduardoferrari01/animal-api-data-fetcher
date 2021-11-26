@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +45,8 @@ public class SnakeControllerTest {
 	@MockBean
 	private SnakeService snakeService;
 	@Mock
+	private Environment env;
+	@Mock
 	private SendImage sendImage;
 	@MockBean
 	private RestTemplate restTemplate;
@@ -54,6 +57,8 @@ public class SnakeControllerTest {
 	@BeforeAll
 	public static void setup() throws IOException {
 
+		System.setProperty("CNN_URL", "localhost");
+		
 		URL url = new URL(
 				"https://pt.wikipedia.org/wiki/Jararacu%C3%A7u#/media/Ficheiro:Jararacu%C3%A7u_(Bothrops_jararacussu)_por_Rodrigo_Tetsuo_Argenton_(5).jpg");
 		InputStream is = url.openStream();
@@ -119,10 +124,10 @@ public class SnakeControllerTest {
 	@Test
 	void mustReturnSnakeTo() throws Exception {
 
-		SnakeTo snakteDto = SnakeUtil.createSnakeDto();
+		when(snakeService.findByLabel("XXX")).thenReturn(SnakeUtil.createSnakeDto());
 
-		when(snakeService.findByLabel("XXX")).thenReturn(snakteDto);
-
+		when(env.getProperty("integration.cnn.url")).thenReturn("host-cnn");
+		
 		ResponseEntity<String> myEntity = new ResponseEntity<String>(json, HttpStatus.CREATED);
 
 		when(restTemplate.exchange(ArgumentMatchers.anyString(), ArgumentMatchers.any(HttpMethod.class),
@@ -141,18 +146,19 @@ public class SnakeControllerTest {
 
 		SnakeTo snakeToResponse = objectMapper.readValue(jsonResturn, SnakeTo.class);
 
+		SnakeTo snakteDtoExpected = SnakeUtil.createSnakeDto();
+		
 		Assertions.assertNotNull(snakeToResponse);
-		Assertions.assertEquals(snakteDto.getAccidentSymptom(), snakeToResponse.getAccidentSymptom());
-		Assertions.assertEquals(snakteDto.getAntivenom(), snakeToResponse.getAntivenom());
-		Assertions.assertEquals(snakteDto.getCharacteristics(), snakeToResponse.getCharacteristics());
-		Assertions.assertEquals(snakteDto.getConservationState(), snakeToResponse.getConservationState());
-		Assertions.assertEquals(snakteDto.getEtymology(), snakeToResponse.getEtymology());
-		Assertions.assertEquals(snakteDto.getGenre(), snakeToResponse.getGenre());
-		Assertions.assertEquals(snakteDto.getSpecies(), snakeToResponse.getSpecies());
-		Assertions.assertEquals(snakteDto.getUrlImage(), snakeToResponse.getUrlImage());
-		Assertions.assertEquals(snakteDto.getVenomous(), snakeToResponse.getVenomous());
-		Assertions.assertFalse(snakteDto.getPopularNames().isEmpty());
-		Assertions.assertEquals(snakteDto.getPopularNames(), snakeToResponse.getPopularNames());
+		Assertions.assertEquals(snakteDtoExpected.getAccidentSymptom(), snakeToResponse.getAccidentSymptom());
+		Assertions.assertEquals(snakteDtoExpected.getAntivenom(), snakeToResponse.getAntivenom());
+		Assertions.assertEquals(snakteDtoExpected.getCharacteristics(), snakeToResponse.getCharacteristics());
+		Assertions.assertEquals(snakteDtoExpected.getConservationState(), snakeToResponse.getConservationState());
+		Assertions.assertEquals(snakteDtoExpected.getEtymology(), snakeToResponse.getEtymology());
+		Assertions.assertEquals(snakteDtoExpected.getGenre(), snakeToResponse.getGenre());
+		Assertions.assertEquals(snakteDtoExpected.getSpecies(), snakeToResponse.getSpecies());
+		Assertions.assertEquals(snakteDtoExpected.getUrlImage(), snakeToResponse.getUrlImage());
+		Assertions.assertEquals(snakteDtoExpected.getVenomous(), snakeToResponse.getVenomous());
+		Assertions.assertEquals(snakteDtoExpected.getPopularNames(), snakeToResponse.getPopularNames());
 
 	}
 }
