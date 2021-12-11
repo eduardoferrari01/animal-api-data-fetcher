@@ -20,6 +20,7 @@ public class SnakeBuilder {
 
 	public SnakeTo builder() {
 		
+		snakeTo.setLabel(snake.getLabel());
 		snakeTo.setAccidentSymptom(snake.getAccidentSymptom().getDescription());
 		snakeTo.setAntivenom(snake.getAntivenom());
 		snakeTo.setVenomous(snake.getVenomous());

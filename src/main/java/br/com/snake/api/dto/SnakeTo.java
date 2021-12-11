@@ -4,6 +4,7 @@ import br.com.snake.api.domain.ConservationState;
  
 public class SnakeTo {
  
+	private String label;
 	private String popularNames;
 	private ConservationState conservationState;
 	private String antivenom;
@@ -19,6 +20,12 @@ public class SnakeTo {
 	private String characteristics;
 	private String accidentSymptom;
 	
+	public String getLabel() {
+		return label;
+	}
+	public void setLabel(String label) {
+		this.label = label;
+	}
 	public String getPopularNames() {
 		return popularNames;
 	}
