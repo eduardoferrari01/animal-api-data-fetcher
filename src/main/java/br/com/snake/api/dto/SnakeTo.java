@@ -1,27 +1,35 @@
 package br.com.snake.api.dto;
 
-import java.util.List;
-
 import br.com.snake.api.domain.ConservationState;
  
 public class SnakeTo {
  
-	private List<String> popularNames;
+	private String label;
+	private String popularNames;
 	private ConservationState conservationState;
 	private String antivenom;
 	private String etymology;
 	private Boolean venomous;
+	private Boolean canCauseSeriousAccident;
 	private String species;
+	private String family;
 	private String genre;
+	private String dentition;
+	private String habitat;
 	private String urlImage;
-	private String urlImageGeographicDistribution;
 	private String characteristics;
 	private String accidentSymptom;
 	
-	public List<String> getPopularNames() {
+	public String getLabel() {
+		return label;
+	}
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	public String getPopularNames() {
 		return popularNames;
 	}
-	public void setPopularNames(List<String> popularNames) {
+	public void setPopularNames(String popularNames) {
 		this.popularNames = popularNames;
 	}
 	public ConservationState getConservationState() {
@@ -35,6 +43,12 @@ public class SnakeTo {
 	}
 	public void setAntivenom(String antivenom) {
 		this.antivenom = antivenom;
+	}
+	public Boolean getCanCauseSeriousAccident() {
+		return canCauseSeriousAccident;
+	}
+	public void setCanCauseSeriousAccident(Boolean canCauseSeriousAccident) {
+		this.canCauseSeriousAccident = canCauseSeriousAccident;
 	}
 	public String getEtymology() {
 		return etymology;
@@ -54,13 +68,30 @@ public class SnakeTo {
 	public void setSpecies(String species) {
 		this.species = species;
 	}
+	public String getFamily() {
+		return family;
+	}
+	public void setFamily(String family) {
+		this.family = family;
+	}
 	public String getGenre() {
 		return genre;
 	}
 	public void setGenre(String genre) {
 		this.genre = genre;
 	}
-	
+	public String getDentition() {
+		return dentition;
+	}
+	public void setDentition(String dentition) {
+		this.dentition = dentition;
+	}
+	public String getHabitat() {
+		return habitat;
+	}
+	public void setHabitat(String habitat) {
+		this.habitat = habitat;
+	}
 	public String getCharacteristics() {
 		return characteristics;
 	}
@@ -79,19 +110,12 @@ public class SnakeTo {
 	public void setUrlImage(String urlImage) {
 		this.urlImage = urlImage;
 	}
-	public String getUrlImageGeographicDistribution() {
-		return urlImageGeographicDistribution;
-	}
-	public void setUrlImageGeographicDistribution(String urlImageGeographicDistribution) {
-		this.urlImageGeographicDistribution = urlImageGeographicDistribution;
-	}
 	
 	@Override
 	public String toString() {
 		return "SnakeTo [popularNames=" + popularNames + ", conservationState=" + conservationState + ", antivenom="
 				+ antivenom + ", etymology=" + etymology + ", venomous=" + venomous + ", species=" + species
-				+ ", genre=" + genre + ", urlImage=" + urlImage + ", urlImageGeographicDistribution="
-				+ urlImageGeographicDistribution + ", characteristics=" + characteristics + ", accidentSymptom="
+				+ ", genre=" + genre + ", urlImage=" + urlImage  + ", characteristics=" + characteristics + ", accidentSymptom="
 				+ accidentSymptom + "]";
 	}
 }

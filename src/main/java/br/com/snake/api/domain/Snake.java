@@ -1,5 +1,6 @@
 package br.com.snake.api.domain;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -7,8 +8,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
-public class Snake {
+public class Snake implements Serializable{
 
+	private static final long serialVersionUID = 3651156997181600619L;
 	@Id
 	private String id;
 	private String label;
@@ -17,13 +19,16 @@ public class Snake {
 	private String antivenom;
 	private String etymology;
 	private Boolean venomous;
+	private Boolean canCauseSeriousAccident;
 	private String species;
+	private String family;
 	private String genre;
+	private String dentition;
+	private String habitat;
 	private String characteristics;
 	private AccidentSymptom accidentSymptom;
 	private String urlImage;
-	private String urlImageGeographicDistribution;
-	
+	 
 	public String getId() {
 		return id;
 	}
@@ -68,17 +73,41 @@ public class Snake {
 	public void setVenomous(Boolean venomous) {
 		this.venomous = venomous;
 	}
+	public Boolean getCanCauseSeriousAccident() {
+		return canCauseSeriousAccident;
+	}
+	public void setCanCauseSeriousAccident(Boolean canCauseSeriousAccident) {
+		this.canCauseSeriousAccident = canCauseSeriousAccident;
+	}
 	public String getSpecies() {
 		return species;
 	}
 	public void setSpecies(String species) {
 		this.species = species;
 	}
+	public String getFamily() {
+		return family;
+	}
+	public void setFamily(String family) {
+		this.family = family;
+	}
 	public String getGenre() {
 		return genre;
 	}
 	public void setGenre(String genre) {
 		this.genre = genre;
+	}
+	public String getDentition() {
+		return dentition;
+	}
+	public String getHabitat() {
+		return habitat;
+	}
+	public void setHabitat(String habitat) {
+		this.habitat = habitat;
+	}
+	public void setDentition(String dentition) {
+		this.dentition = dentition;
 	}
 	public String getCharacteristics() {
 		return characteristics;
@@ -97,12 +126,6 @@ public class Snake {
 	}
 	public void setUrlImage(String urlImage) {
 		this.urlImage = urlImage;
-	}
-	public String getUrlImageGeographicDistribution() {
-		return urlImageGeographicDistribution;
-	}
-	public void setUrlImageGeographicDistribution(String urlImageGeographicDistribution) {
-		this.urlImageGeographicDistribution = urlImageGeographicDistribution;
 	}
 	
 	@Override

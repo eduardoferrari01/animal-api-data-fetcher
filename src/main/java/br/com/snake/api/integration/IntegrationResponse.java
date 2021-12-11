@@ -1,5 +1,8 @@
 package br.com.snake.api.integration;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class IntegrationResponse {
 
 	private String label;

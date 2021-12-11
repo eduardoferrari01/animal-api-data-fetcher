@@ -13,39 +13,30 @@ public class SnakeUtil {
 
 	public static SnakeTo createSnakeDto() {
 		
-		return new SnakeBuilder(createSnakeDomain())
-				.accidentSymptom()
-				.antivenom()
-				.characteristics()
-				.conservationState()
-				.etymology()
-				.genre()
-				.popularNames()
-				.species()
-				.venomous()
-				.imagem()
-				.imageGeographicDistribution().builder();
+		return new SnakeBuilder(createSnakeDomain()).builder();
 	}
 	
 	public static Snake createSnakeDomain() {
 		
 		Snake snake = new Snake();
 		AccidentSymptom accidentSymptom = new AccidentSymptom();
-		accidentSymptom.setDescription(
-				"Não causam inchaço, nem necrose local, uma sensação de formigamento na área da picada");
+		accidentSymptom.setDescription("text description");
 		accidentSymptom.setTypeAccident(TypeAccident.ELIPID);
 		snake.setAccidentSymptom(accidentSymptom);
-		snake.setCharacteristics("cobra extremamente venenosa pertencente à família Elapidae");
+		snake.setCharacteristics("text characteristics");
 		snake.setConservationState(ConservationState.LC);
-		snake.setEtymology("O nome mamba deriva do zulu, imamba");
-		snake.setGenre("Dendroaspis");
+		snake.setEtymology("text etymology");
+		snake.setFamily("text family");
+		snake.setGenre("text genre");
 		snake.setPopularNames(Arrays.asList("mamba-negra"));
-		snake.setLabel("ZZZ");
-		snake.setSpecies("Dendroaspis polylepis");
+		snake.setLabel("textlabel");
+		snake.setSpecies("text dpecies");
 		snake.setVenomous(true);
-		snake.setAntivenom("Antiveneno polivalente");
+		snake.setCanCauseSeriousAccident(true);
+		snake.setAntivenom("text antivenom");
+		snake.setHabitat("text habitat");
+		snake.setDentition("text dentition");
 		snake.setUrlImage("localhost");
-		snake.setUrlImageGeographicDistribution("localhost");
 		return snake;
 	}
 }
