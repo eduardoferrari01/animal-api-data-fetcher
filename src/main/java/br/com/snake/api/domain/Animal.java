@@ -8,7 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
-public class Snake implements Serializable{
+public class Animal implements Serializable{
 
 	private static final long serialVersionUID = 3651156997181600619L;
 	@Id
@@ -140,7 +140,7 @@ public class Snake implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Snake other = (Snake) obj;
+		Animal other = (Animal) obj;
 		return Objects.equals(id, other.id);
 	}
 	

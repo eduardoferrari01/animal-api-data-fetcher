@@ -15,26 +15,26 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.com.snake.api.controller.NotFoundException;
-import br.com.snake.api.domain.Snake;
-import br.com.snake.api.dto.SnakeTo;
-import br.com.snake.api.repository.SnakeRepository;
-import br.com.snake.api.util.SnakeUtil;
+import br.com.snake.api.domain.Animal;
+import br.com.snake.api.dto.AnimalTo;
+import br.com.snake.api.repository.AnimalRepository;
+import br.com.snake.api.util.AnimalUtil;
 
 @ExtendWith(MockitoExtension.class)
-public class SnakeServiceTest {
+public class AnimalServiceTest {
 
 	@InjectMocks
-	private SnakeService snakeService;
+	private AnimalService snakeService;
 	@Mock
-	private SnakeRepository snakeRepository;
-	private static Snake snake;
+	private AnimalRepository snakeRepository;
+	private static Animal snake;
 	private static String label;
 	
 	@BeforeAll
 	public static void setup() {
 		
 		label = "dendroaspis-polylepis";
-		snake = SnakeUtil.createSnakeDomain();
+		snake = AnimalUtil.createAnimalDomain();
 	}
 	
 	@Test
@@ -42,7 +42,7 @@ public class SnakeServiceTest {
 		
 		when(snakeRepository.findByLabel(label)).thenReturn(Optional.of(snake));
 		
-		SnakeTo snakeTo =  snakeService.findByLabel(label);
+		AnimalTo snakeTo =  snakeService.findByLabel(label);
 		verify(snakeRepository).findByLabel(label);
 		
 		Assertions.assertNotNull(snakeTo);

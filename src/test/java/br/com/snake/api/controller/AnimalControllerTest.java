@@ -32,18 +32,18 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.com.snake.api.dto.SnakeTo;
+import br.com.snake.api.dto.AnimalTo;
 import br.com.snake.api.integration.SendImage;
-import br.com.snake.api.service.SnakeService;
-import br.com.snake.api.util.SnakeUtil;
+import br.com.snake.api.service.AnimalService;
+import br.com.snake.api.util.AnimalUtil;
 
-@WebMvcTest(SnakeController.class)
-public class SnakeControllerTest {
+@WebMvcTest(AnimalController.class)
+public class AnimalControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
 	@MockBean
-	private SnakeService snakeService;
+	private AnimalService animalService;
 	@Mock
 	private Environment env;
 	@Mock
@@ -115,7 +115,7 @@ public class SnakeControllerTest {
 		when(restTemplate.exchange(ArgumentMatchers.anyString(), ArgumentMatchers.any(HttpMethod.class),
 				ArgumentMatchers.any(), ArgumentMatchers.<Class<String>>any())).thenReturn(myEntity);
 
-		when(snakeService.findByLabel(Mockito.anyString())).thenThrow(NotFoundException.class);
+		when(animalService.findByLabel(Mockito.anyString())).thenThrow(NotFoundException.class);
 
 		mockMvc.perform(MockMvcRequestBuilders.multipart(router).file(file)).andExpect(status().isNotFound())
 				.andReturn();
@@ -129,9 +129,9 @@ public class SnakeControllerTest {
 	}
 
 	@Test
-	void mustReturnSnakeTo() throws Exception {
+	void mustReturnAnimalTo() throws Exception {
 
-		when(snakeService.findByLabel(label)).thenReturn(SnakeUtil.createSnakeDto());
+		when(animalService.findByLabel(label)).thenReturn(AnimalUtil.createSnakeDto());
 
 		when(env.getProperty(urlKey)).thenReturn(urlValue);
 		
@@ -143,12 +143,12 @@ public class SnakeControllerTest {
 		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart(router).file(file))
 				.andExpect(status().isOk()).andReturn();
 
-		verify(snakeService).findByLabel(label);
+		verify(animalService).findByLabel(label);
 
 		mvcResult.getResponse().setCharacterEncoding(encoding);
 		String jsonResturn = mvcResult.getResponse().getContentAsString();
 
-		SnakeTo animalToResponse = objectMapper.readValue(jsonResturn, SnakeTo.class);
+		AnimalTo animalToResponse = objectMapper.readValue(jsonResturn, AnimalTo.class);
 
 		validateAnimalTo(animalToResponse);
 	 
@@ -157,20 +157,20 @@ public class SnakeControllerTest {
 	@Test
 	public void whenPassingLabelItMustReturnAnimalTo() throws Exception {
 		
-		when(snakeService.findByLabel(label)).thenReturn(SnakeUtil.createSnakeDto());
+		when(animalService.findByLabel(label)).thenReturn(AnimalUtil.createSnakeDto());
 
 		when(env.getProperty(urlKey)).thenReturn(urlValue);
 		
 		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(router+"/find/{label}", label))
 				.andExpect(status().isOk()).andReturn();
 
-		verify(snakeService).findByLabel(label);
+		verify(animalService).findByLabel(label);
 
 		mvcResult.getResponse().setCharacterEncoding(encoding);
 		
 		String jsonResturn = mvcResult.getResponse().getContentAsString();
 
-		SnakeTo animalToResponse = objectMapper.readValue(jsonResturn, SnakeTo.class);
+		AnimalTo animalToResponse = objectMapper.readValue(jsonResturn, AnimalTo.class);
 		
 		validateAnimalTo(animalToResponse);
 	}
@@ -178,16 +178,16 @@ public class SnakeControllerTest {
 	@Test
 	void whenPassingLabelThatDoesnExistShouldThrowNotFoundException() throws Exception {
 
-		when(snakeService.findByLabel(Mockito.anyString())).thenThrow(NotFoundException.class);
+		when(animalService.findByLabel(Mockito.anyString())).thenThrow(NotFoundException.class);
 
 		mockMvc.perform(MockMvcRequestBuilders.get(router+"/find/{label}", "AAA"))
 				.andExpect(status().isNotFound());
 	
 	}
 	
-	private void validateAnimalTo(SnakeTo animalToResponse) {
+	private void validateAnimalTo(AnimalTo animalToResponse) {
 		
-		SnakeTo animalDtoExpected = SnakeUtil.createSnakeDto();
+		AnimalTo animalDtoExpected = AnimalUtil.createSnakeDto();
 		
 		Assertions.assertNotNull(animalToResponse);
 		Assertions.assertEquals(animalDtoExpected.getAccidentSymptom(), animalToResponse.getAccidentSymptom());

@@ -2,7 +2,7 @@ package br.com.snake.api.dto;
 
 import br.com.snake.api.domain.ConservationState;
  
-public class SnakeTo {
+public class AnimalTo {
  
 	private String label;
 	private String popularNames;
@@ -113,7 +113,7 @@ public class SnakeTo {
 	
 	@Override
 	public String toString() {
-		return "SnakeTo [popularNames=" + popularNames + ", conservationState=" + conservationState + ", antivenom="
+		return "AnimalTo [popularNames=" + popularNames + ", conservationState=" + conservationState + ", antivenom="
 				+ antivenom + ", etymology=" + etymology + ", venomous=" + venomous + ", species=" + species
 				+ ", genre=" + genre + ", urlImage=" + urlImage  + ", characteristics=" + characteristics + ", accidentSymptom="
 				+ accidentSymptom + "]";
