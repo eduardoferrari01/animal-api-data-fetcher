@@ -50,20 +50,27 @@ public class SnakeControllerTest {
 	private SendImage sendImage;
 	@MockBean
 	private RestTemplate restTemplate;
-	private static String json = "{\"label\":\"XXX\"}";
+	private final static String json = "{\"label\":\"XXX\"}";
 	private static MockMultipartFile file;
 	private String router = "/api/snake/information";
-
+	private static ObjectMapper objectMapper;
+	private final String label = "XXX";
+	private final String encoding = "UTF-8";
+	private final String urlKey = "integration.cnn.url";
+	private final String urlValue = "host-cnn";
+	
 	@BeforeAll
 	public static void setup() throws IOException {
 
+		objectMapper = new ObjectMapper();
+		
 		System.setProperty("CNN_URL", "localhost");
 		
 		URL url = new URL(
 				"https://pt.wikipedia.org/wiki/Jararacu%C3%A7u#/media/Ficheiro:Jararacu%C3%A7u_(Bothrops_jararacussu)_por_Rodrigo_Tetsuo_Argenton_(5).jpg");
 		InputStream is = url.openStream();
 		file = new MockMultipartFile("file", "filename.png", "image/jpeg", is.readAllBytes());
-	
+		
 	}
 
 	@Test
@@ -124,9 +131,9 @@ public class SnakeControllerTest {
 	@Test
 	void mustReturnSnakeTo() throws Exception {
 
-		when(snakeService.findByLabel("XXX")).thenReturn(SnakeUtil.createSnakeDto());
+		when(snakeService.findByLabel(label)).thenReturn(SnakeUtil.createSnakeDto());
 
-		when(env.getProperty("integration.cnn.url")).thenReturn("host-cnn");
+		when(env.getProperty(urlKey)).thenReturn(urlValue);
 		
 		ResponseEntity<String> myEntity = new ResponseEntity<String>(json, HttpStatus.CREATED);
 
@@ -136,29 +143,63 @@ public class SnakeControllerTest {
 		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart(router).file(file))
 				.andExpect(status().isOk()).andReturn();
 
-		// verify(sendImage).post(Mockito.any());
-		verify(snakeService).findByLabel("XXX");
+		verify(snakeService).findByLabel(label);
 
-		mvcResult.getResponse().setCharacterEncoding("UTF-8");
+		mvcResult.getResponse().setCharacterEncoding(encoding);
 		String jsonResturn = mvcResult.getResponse().getContentAsString();
 
-		ObjectMapper objectMapper = new ObjectMapper();
+		SnakeTo animalToResponse = objectMapper.readValue(jsonResturn, SnakeTo.class);
 
-		SnakeTo snakeToResponse = objectMapper.readValue(jsonResturn, SnakeTo.class);
-
-		SnakeTo snakteDtoExpected = SnakeUtil.createSnakeDto();
-		
-		Assertions.assertNotNull(snakeToResponse);
-		Assertions.assertEquals(snakteDtoExpected.getAccidentSymptom(), snakeToResponse.getAccidentSymptom());
-		Assertions.assertEquals(snakteDtoExpected.getAntivenom(), snakeToResponse.getAntivenom());
-		Assertions.assertEquals(snakteDtoExpected.getCharacteristics(), snakeToResponse.getCharacteristics());
-		Assertions.assertEquals(snakteDtoExpected.getConservationState(), snakeToResponse.getConservationState());
-		Assertions.assertEquals(snakteDtoExpected.getEtymology(), snakeToResponse.getEtymology());
-		Assertions.assertEquals(snakteDtoExpected.getGenre(), snakeToResponse.getGenre());
-		Assertions.assertEquals(snakteDtoExpected.getSpecies(), snakeToResponse.getSpecies());
-		Assertions.assertEquals(snakteDtoExpected.getUrlImage(), snakeToResponse.getUrlImage());
-		Assertions.assertEquals(snakteDtoExpected.getVenomous(), snakeToResponse.getVenomous());
-		Assertions.assertEquals(snakteDtoExpected.getPopularNames(), snakeToResponse.getPopularNames());
-
+		validateAnimalTo(animalToResponse);
+	 
 	}
+	
+	@Test
+	public void whenPassingLabelItMustReturnAnimalTo() throws Exception {
+		
+		when(snakeService.findByLabel(label)).thenReturn(SnakeUtil.createSnakeDto());
+
+		when(env.getProperty(urlKey)).thenReturn(urlValue);
+		
+		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(router+"/find/{label}", label))
+				.andExpect(status().isOk()).andReturn();
+
+		verify(snakeService).findByLabel(label);
+
+		mvcResult.getResponse().setCharacterEncoding(encoding);
+		
+		String jsonResturn = mvcResult.getResponse().getContentAsString();
+
+		SnakeTo animalToResponse = objectMapper.readValue(jsonResturn, SnakeTo.class);
+		
+		validateAnimalTo(animalToResponse);
+	}
+	
+	@Test
+	void whenPassingLabelThatDoesnExistShouldThrowNotFoundException() throws Exception {
+
+		when(snakeService.findByLabel(Mockito.anyString())).thenThrow(NotFoundException.class);
+
+		mockMvc.perform(MockMvcRequestBuilders.get(router+"/find/{label}", "AAA"))
+				.andExpect(status().isNotFound());
+	
+	}
+	
+	private void validateAnimalTo(SnakeTo animalToResponse) {
+		
+		SnakeTo animalDtoExpected = SnakeUtil.createSnakeDto();
+		
+		Assertions.assertNotNull(animalToResponse);
+		Assertions.assertEquals(animalDtoExpected.getAccidentSymptom(), animalToResponse.getAccidentSymptom());
+		Assertions.assertEquals(animalDtoExpected.getAntivenom(), animalToResponse.getAntivenom());
+		Assertions.assertEquals(animalDtoExpected.getCharacteristics(), animalToResponse.getCharacteristics());
+		Assertions.assertEquals(animalDtoExpected.getConservationState(), animalToResponse.getConservationState());
+		Assertions.assertEquals(animalDtoExpected.getEtymology(), animalToResponse.getEtymology());
+		Assertions.assertEquals(animalDtoExpected.getGenre(), animalToResponse.getGenre());
+		Assertions.assertEquals(animalDtoExpected.getSpecies(), animalToResponse.getSpecies());
+		Assertions.assertEquals(animalDtoExpected.getUrlImage(), animalToResponse.getUrlImage());
+		Assertions.assertEquals(animalDtoExpected.getVenomous(), animalToResponse.getVenomous());
+		Assertions.assertEquals(animalDtoExpected.getPopularNames(), animalToResponse.getPopularNames());
+	}
+	
 }
