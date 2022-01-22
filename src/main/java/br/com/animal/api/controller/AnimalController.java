@@ -22,7 +22,7 @@ import br.com.animal.api.integration.SendImage;
 import br.com.animal.api.service.AnimalService;
 
 @RestController
-@RequestMapping("/api/snake/")
+@RequestMapping("/api/animal/")
 public class AnimalController {
 
 	@Autowired

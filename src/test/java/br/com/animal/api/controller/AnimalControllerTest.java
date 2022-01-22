@@ -54,7 +54,7 @@ public class AnimalControllerTest {
 	private RestTemplate restTemplate;
 	private final static String json = "{\"label\":\"XXX\"}";
 	private static MockMultipartFile file;
-	private String router = "/api/snake/information";
+	private String router = "/api/animal/information";
 	private static ObjectMapper objectMapper;
 	private final String label = "XXX";
 	private final String encoding = "UTF-8";
