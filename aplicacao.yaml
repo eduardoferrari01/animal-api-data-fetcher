@@ -1,0 +1,32 @@
+version: "3.9"
+services:
+
+    web:
+        build: .
+        container_name: animal-api_instance
+        depends_on:
+          - db
+          - cnn
+        environment:
+          - 'JDBC_DATABASE_URL=mongodb://db:27017/db-animal'
+          - 'CNN_URL=http://cnn:8000/cnn/classify/'
+        ports:
+            - "8080:8080"
+
+
+    db:
+      image: mongo
+      container_name: mongo_instance_001
+      ports:
+          - 27017:27017
+      volumes:
+        - mongodata:/var/lib/monogodb/data
+
+    cnn:
+      image: cnn-api
+      container_name: cnn-api_instance
+      ports:
+          - 8000:8000
+
+volumes:
+  mongodata:
