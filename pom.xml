@@ -9,11 +9,11 @@
 		<version>2.5.4</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>br.com.snake</groupId>
-	<artifactId>snake-api</artifactId>
+	<groupId>br.com.animal</groupId>
+	<artifactId>animal-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>snake-api</name>
-	<description>Snake</description>
+	<name>animal-api</name>
+	<description>Animal</description>
 	<properties>
 		<java.version>16</java.version>
 	</properties>
