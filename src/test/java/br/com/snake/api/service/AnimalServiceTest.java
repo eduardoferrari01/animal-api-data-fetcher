@@ -24,46 +24,46 @@ import br.com.snake.api.util.AnimalUtil;
 public class AnimalServiceTest {
 
 	@InjectMocks
-	private AnimalService snakeService;
+	private AnimalService animalService;
 	@Mock
-	private AnimalRepository snakeRepository;
-	private static Animal snake;
+	private AnimalRepository animalRepository;
+	private static Animal animal;
 	private static String label;
 	
 	@BeforeAll
 	public static void setup() {
 		
 		label = "dendroaspis-polylepis";
-		snake = AnimalUtil.createAnimalDomain();
+		animal = AnimalUtil.createAnimalDomain();
 	}
 	
 	@Test
-	void mustReturnSnakeTo() {
+	void mustReturnAnimalTo() {
 		
-		when(snakeRepository.findByLabel(label)).thenReturn(Optional.of(snake));
+		when(animalRepository.findByLabel(label)).thenReturn(Optional.of(animal));
 		
-		AnimalTo snakeTo =  snakeService.findByLabel(label);
-		verify(snakeRepository).findByLabel(label);
+		AnimalTo animalTo =  animalService.findByLabel(label);
+		verify(animalRepository).findByLabel(label);
 		
-		Assertions.assertNotNull(snakeTo);
-		Assertions.assertEquals(snake.getAccidentSymptom().getDescription(), snakeTo.getAccidentSymptom());
-		Assertions.assertEquals(snake.getAntivenom(), snakeTo.getAntivenom());
-		Assertions.assertEquals(snake.getCharacteristics(), snakeTo.getCharacteristics());
-		Assertions.assertEquals(snake.getConservationState(), snakeTo.getConservationState());
-		Assertions.assertEquals(snake.getEtymology(), snakeTo.getEtymology());
-		Assertions.assertEquals(snake.getGenre(), snakeTo.getGenre());
-		Assertions.assertEquals(snake.getSpecies(), snakeTo.getSpecies());
-		Assertions.assertEquals(snake.getUrlImage(), snakeTo.getUrlImage());
-		Assertions.assertEquals(snake.getVenomous(), snakeTo.getVenomous());
-		String popularNames = String.join(", ", snake.getPopularNames());
-		Assertions.assertEquals(popularNames, snakeTo.getPopularNames());
+		Assertions.assertNotNull(animalTo);
+		Assertions.assertEquals(animal.getAccidentSymptom().getDescription(), animalTo.getAccidentSymptom());
+		Assertions.assertEquals(animal.getAntivenom(), animalTo.getAntivenom());
+		Assertions.assertEquals(animal.getCharacteristics(), animalTo.getCharacteristics());
+		Assertions.assertEquals(animal.getConservationState(), animalTo.getConservationState());
+		Assertions.assertEquals(animal.getEtymology(), animalTo.getEtymology());
+		Assertions.assertEquals(animal.getGenre(), animalTo.getGenre());
+		Assertions.assertEquals(animal.getSpecies(), animalTo.getSpecies());
+		Assertions.assertEquals(animal.getUrlImage(), animalTo.getUrlImage());
+		Assertions.assertEquals(animal.getVenomous(), animalTo.getVenomous());
+		String popularNames = String.join(", ", animal.getPopularNames());
+		Assertions.assertEquals(popularNames, animalTo.getPopularNames());
 	}
 	
 	@Test
 	void shouldThrowNotFoundException() {
 		 
 		assertThrows(NotFoundException.class, () -> {
-			snakeService.findByLabel(label);
+			animalService.findByLabel(label);
 		});
 		
 	}

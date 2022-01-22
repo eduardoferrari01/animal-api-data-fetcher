@@ -1,6 +1,6 @@
 package br.com.snake.api;
 
-class SnakesApiApplicationTests {
+class AnimalApiApplicationTests {
 
 	 
 	void contextLoads() {

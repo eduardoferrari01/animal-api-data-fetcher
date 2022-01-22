@@ -12,10 +12,10 @@ import io.swagger.v3.oas.annotations.info.Info;
 @OpenAPIDefinition(info = @Info(title = "Snake API", version = "1.0", description = "Information"))
 @EnableCaching
 @EnableAutoConfiguration
-public class SnakesApiApplication {
+public class AnimalApiApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SnakesApiApplication.class, args);
+		SpringApplication.run(AnimalApiApplication.class, args);
 	}
 
 }
