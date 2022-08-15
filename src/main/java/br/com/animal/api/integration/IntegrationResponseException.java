@@ -1,14 +1,20 @@
 package br.com.animal.api.integration;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpStatusCodeException;
 
-public class IntegrationResponseException extends HttpStatusCodeException{
+public class IntegrationResponseException extends RuntimeException {
 
 	private static final long serialVersionUID = 3287766040532132551L;
+	private HttpStatus httpStatus;
+	
+	public IntegrationResponseException(String msg, HttpStatus httpStatus) {
 
-	public IntegrationResponseException(HttpStatus statusCode) {
-		
-		super(statusCode);
+		super(msg);
+		this.httpStatus = httpStatus;
 	}
+	
+	public HttpStatus getHttpStatus() {
+		return this.httpStatus;
+	}
+	
 }

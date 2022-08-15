@@ -19,27 +19,25 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class SendImage implements ISendImage{
+public class SendImage implements ISendImage {
 
 	private RestTemplate restTemplate;
 	private HttpHeaders headers;
-	//cnn host
 	private String host = "";
 	private String property = "integration.cnn.url";
 	private ObjectMapper objectMapper;
 	private static final Logger LOG = LoggerFactory.getLogger(SendImage.class);
-	
+
 	public SendImage(RestTemplate restTemplate, Environment env) {
 		this.restTemplate = restTemplate;
 		this.host = env.getProperty(property);
 		this.headers = new HttpHeaders();
 		this.headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 		this.objectMapper = new ObjectMapper();
-
 	}
 
 	@Override
-	public IntegrationResponse post(byte[] bytes) throws IntegrationResponseException {
+	public IntegrationResponse post(byte[] bytes) {
 
 		MultiValueMap<String, String> fileMap = new LinkedMultiValueMap<>();
 		ContentDisposition contentDisposition = ContentDisposition.builder("form-data").filename("image").name("file")
@@ -62,18 +60,20 @@ public class SendImage implements ISendImage{
 
 		} catch (HttpServerErrorException e) {
 
-			LOG.error("API error: {}", e.getMessage());
-			throw new IntegrationResponseException(HttpStatus.BAD_GATEWAY);
+			LOG.error(e.getMessage());
+			throw new IntegrationResponseException("API error", HttpStatus.BAD_GATEWAY);
 
 		} catch (RestClientException e) {
-			LOG.error("Connection refused: {}", e.getMessage());
-			throw new IntegrationResponseException(HttpStatus.BAD_GATEWAY);
+
+			LOG.error(e.getMessage());
+			throw new IntegrationResponseException("Could not connect to cnn server", HttpStatus.BAD_GATEWAY);
+
 		} catch (JsonProcessingException e) {
-			LOG.error("Json processing error: {}", e.getMessage());
-			throw new IntegrationResponseException(HttpStatus.BAD_GATEWAY);
+
+			LOG.error(e.getMessage());
+			throw new IntegrationResponseException("Json processing error", HttpStatus.BAD_REQUEST);
 		}
 
 		return integrationResponse;
-
 	}
 }
