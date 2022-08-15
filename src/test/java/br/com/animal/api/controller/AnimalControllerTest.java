@@ -105,7 +105,7 @@ public class AnimalControllerTest {
 					};
 				});
 
-		mockMvc.perform(MockMvcRequestBuilders.multipart(router).file(file)).andExpect(status().isBadGateway())
+		mockMvc.perform(MockMvcRequestBuilders.multipart(router).file(file)).andExpect(status().isBadRequest())
 				.andReturn();
 	}
 
