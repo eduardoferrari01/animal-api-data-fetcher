@@ -18,7 +18,6 @@ import br.com.animal.api.controller.NotFoundException;
 import br.com.animal.api.domain.Animal;
 import br.com.animal.api.dto.AnimalTo;
 import br.com.animal.api.repository.AnimalRepository;
-import br.com.animal.api.service.AnimalService;
 import br.com.animal.api.util.AnimalUtil;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,12 +49,12 @@ public class AnimalServiceTest {
 		Assertions.assertEquals(animal.getAccidentSymptom().getDescription(), animalTo.getAccidentSymptom());
 		Assertions.assertEquals(animal.getAntivenom(), animalTo.getAntivenom());
 		Assertions.assertEquals(animal.getCharacteristics(), animalTo.getCharacteristics());
-		Assertions.assertEquals(animal.getConservationState(), animalTo.getConservationState());
+		Assertions.assertEquals(animal.getConservationState().getLabel(), animalTo.getConservationState());
 		Assertions.assertEquals(animal.getEtymology(), animalTo.getEtymology());
 		Assertions.assertEquals(animal.getGenre(), animalTo.getGenre());
 		Assertions.assertEquals(animal.getSpecies(), animalTo.getSpecies());
 		Assertions.assertEquals(animal.getUrlImage(), animalTo.getUrlImage());
-		Assertions.assertEquals(animal.getVenomous(), animalTo.getVenomous());
+		Assertions.assertEquals(animal.getVenomous() ? "Sim" : "Não", animalTo.getVenomous());
 		String popularNames = String.join(", ", animal.getPopularNames());
 		Assertions.assertEquals(popularNames, animalTo.getPopularNames());
 	}

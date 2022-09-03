@@ -1,16 +1,14 @@
 package br.com.animal.api.dto;
 
-import br.com.animal.api.domain.ConservationState;
- 
 public class AnimalTo {
  
 	private String label;
 	private String popularNames;
-	private ConservationState conservationState;
+	private String conservationState;
 	private String antivenom;
 	private String etymology;
-	private Boolean venomous;
-	private Boolean canCauseSeriousAccident;
+	private String venomous;
+	private String canCauseSeriousAccident;
 	private String species;
 	private String family;
 	private String genre;
@@ -32,10 +30,10 @@ public class AnimalTo {
 	public void setPopularNames(String popularNames) {
 		this.popularNames = popularNames;
 	}
-	public ConservationState getConservationState() {
+	public String getConservationState() {
 		return conservationState;
 	}
-	public void setConservationState(ConservationState conservationState) {
+	public void setConservationState(String conservationState) {
 		this.conservationState = conservationState;
 	}
 	public String getAntivenom() {
@@ -44,10 +42,10 @@ public class AnimalTo {
 	public void setAntivenom(String antivenom) {
 		this.antivenom = antivenom;
 	}
-	public Boolean getCanCauseSeriousAccident() {
+	public String getCanCauseSeriousAccident() {
 		return canCauseSeriousAccident;
 	}
-	public void setCanCauseSeriousAccident(Boolean canCauseSeriousAccident) {
+	public void setCanCauseSeriousAccident(String canCauseSeriousAccident) {
 		this.canCauseSeriousAccident = canCauseSeriousAccident;
 	}
 	public String getEtymology() {
@@ -56,10 +54,10 @@ public class AnimalTo {
 	public void setEtymology(String etymology) {
 		this.etymology = etymology;
 	}
-	public Boolean getVenomous() {
+	public String getVenomous() {
 		return venomous;
 	}
-	public void setVenomous(Boolean venomous) {
+	public void setVenomous(String venomous) {
 		this.venomous = venomous;
 	}
 	public String getSpecies() {

@@ -32,8 +32,6 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.com.animal.api.controller.AnimalController;
-import br.com.animal.api.controller.NotFoundException;
 import br.com.animal.api.dto.AnimalTo;
 import br.com.animal.api.integration.SendImage;
 import br.com.animal.api.service.AnimalService;

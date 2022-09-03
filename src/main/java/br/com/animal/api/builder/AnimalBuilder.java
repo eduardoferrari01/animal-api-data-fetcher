@@ -23,8 +23,8 @@ public class AnimalBuilder {
 		animalTo.setLabel(animal.getLabel());
 		animalTo.setAccidentSymptom(animal.getAccidentSymptom().getDescription());
 		animalTo.setAntivenom(animal.getAntivenom());
-		animalTo.setVenomous(animal.getVenomous());
-		animalTo.setCanCauseSeriousAccident(animal.getCanCauseSeriousAccident());
+		animalTo.setVenomous(animal.getVenomous() ? "Sim" : "Não");
+		animalTo.setCanCauseSeriousAccident(animal.getCanCauseSeriousAccident() ? "Sim" : "Não");
 		animalTo.setSpecies(animal.getSpecies());
 		animalTo.setPopularNames(String.join(", ", animal.getPopularNames()));
 		animalTo.setFamily(animal.getFamily());
@@ -32,7 +32,7 @@ public class AnimalBuilder {
 		animalTo.setDentition(animal.getDentition());
 		animalTo.setHabitat(animal.getHabitat());
 		animalTo.setEtymology(animal.getEtymology());
-		animalTo.setConservationState(animal.getConservationState());
+		animalTo.setConservationState(animal.getConservationState().getLabel());
 		animalTo.setCharacteristics(animal.getCharacteristics());
 		animalTo.setUrlImage(animal.getUrlImage());
 		
