@@ -1,6 +1,7 @@
 package br.com.animal.api.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,13 @@ public class AnimalController {
 		LOG.info("Label {}", label);
 		AnimalTo animalTo = animalService.findByLabel(label);
 		return ResponseEntity.ok(animalTo);
+	}
+	
+	@GetMapping(value = "/find/labels/available")
+	public ResponseEntity<List<String>> findLabelsAvailableToRegister(){
+		
+		List<String> labels =  animalService.findLabelsAvailableToRegister();
+		return ResponseEntity.ok(labels);
 	}
 
 }

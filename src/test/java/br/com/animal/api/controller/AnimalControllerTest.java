@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,6 +26,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -155,7 +157,7 @@ public class AnimalControllerTest {
 	}
 	
 	@Test
-	public void whenPassingLabelItMustReturnAnimalTo() throws Exception {
+	void whenPassingLabelItMustReturnAnimalTo() throws Exception {
 		
 		when(animalService.findByLabel(label)).thenReturn(AnimalUtil.createSnakeDto());
 
@@ -200,6 +202,22 @@ public class AnimalControllerTest {
 		Assertions.assertEquals(animalDtoExpected.getUrlImage(), animalToResponse.getUrlImage());
 		Assertions.assertEquals(animalDtoExpected.getVenomous(), animalToResponse.getVenomous());
 		Assertions.assertEquals(animalDtoExpected.getPopularNames(), animalToResponse.getPopularNames());
+	}
+	
+	@Test
+	void mustReturnLabelsAvailableForRegistration() throws Exception  {
+		
+		when(animalService.findLabelsAvailableToRegister()).thenReturn(Arrays.asList("label3", "label4"));
+		
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/animal/find/labels/available/"))
+		.andExpect(status().isOk())
+		.andExpect(MockMvcResultMatchers.jsonPath("$").hasJsonPath())
+		.andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
+		.andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.[0]").value("label3"))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.[0]").value("label3"));
+
+		verify(animalService).findLabelsAvailableToRegister();
 	}
 	
 }

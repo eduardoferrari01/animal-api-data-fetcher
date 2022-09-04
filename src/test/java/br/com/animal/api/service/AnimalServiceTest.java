@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
@@ -12,11 +14,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.com.animal.api.controller.NotFoundException;
 import br.com.animal.api.domain.Animal;
 import br.com.animal.api.dto.AnimalTo;
+import br.com.animal.api.integration.CnnApi;
 import br.com.animal.api.repository.AnimalRepository;
 import br.com.animal.api.util.AnimalUtil;
 
@@ -27,6 +31,8 @@ public class AnimalServiceTest {
 	private AnimalService animalService;
 	@Mock
 	private AnimalRepository animalRepository;
+	@Mock
+	private CnnApi cnnApi;
 	private static Animal animal;
 	private static String label;
 	
@@ -68,4 +74,26 @@ public class AnimalServiceTest {
 		
 	}
 	
+	@Test
+	void mustReturnLabelsAvailableForRegistration() {
+		
+		when(cnnApi.getAllLabels()).thenReturn(Arrays.asList("label1", "label2", "label3", "label4"));
+		
+		Animal animal1 = new Animal();
+		animal1.setLabel("label1");
+		Animal animal2 = new Animal();
+		animal2.setLabel("label2");
+		
+		when(animalRepository.findByLabelIn(Mockito.anyList())).thenReturn(Arrays.asList(animal1, animal2));
+		
+		List<String> labels = animalService.findLabelsAvailableToRegister();
+	
+		verify(cnnApi).getAllLabels();
+		verify(animalRepository).findByLabelIn(Mockito.anyList());
+		
+		Assertions.assertNotNull(labels);
+		Assertions.assertFalse(labels.isEmpty());
+		Assertions.assertEquals(2, labels.size());
+		Assertions.assertIterableEquals(Arrays.asList("label3", "label4"), labels);
+	}
 }
