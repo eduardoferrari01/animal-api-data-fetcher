@@ -30,7 +30,7 @@ public class SendImage implements ISendImage {
 
 	public SendImage(RestTemplate restTemplate, Environment env) {
 		this.restTemplate = restTemplate;
-		this.host = env.getProperty(property);
+		this.host = env.getProperty(property) + "/cnn/classify/";
 		this.headers = new HttpHeaders();
 		this.headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 		this.objectMapper = new ObjectMapper();
