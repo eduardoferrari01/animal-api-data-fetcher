@@ -6,7 +6,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,11 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.com.animal.api.dto.AnimalTo;
-import br.com.animal.api.integration.SendImage;
+import br.com.animal.api.integration.CnnApi;
 import br.com.animal.api.service.AnimalService;
 
 @RestController
@@ -30,16 +28,13 @@ public class AnimalController {
 	private AnimalService animalService;
 	private static final Logger LOG = LoggerFactory.getLogger(AnimalController.class);
 	@Autowired
-	private RestTemplate restTemplate;
-	@Autowired
-	private Environment env;
-
+	private CnnApi cnnApi;
+	
 	@PostMapping(value = "/information", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
 	public ResponseEntity<AnimalTo> information(@RequestParam("file") MultipartFile file) throws IOException {
 
 		    LOG.info("Image received {}", file.getOriginalFilename());
-		    SendImage sendImage = new SendImage(restTemplate, env);
-			String label = sendImage.post(file.getBytes()).getLabel();
+		    String label = cnnApi.classify(file).getLabel();
 			AnimalTo animalTo = animalService.findByLabel(label);
 			LOG.info("Reply sent to customer");
 			return ResponseEntity.ok(animalTo);

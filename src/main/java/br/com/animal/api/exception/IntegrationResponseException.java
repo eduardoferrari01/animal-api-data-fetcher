@@ -1,4 +1,4 @@
-package br.com.animal.api.integration;
+package br.com.animal.api.exception;
 
 import org.springframework.http.HttpStatus;
 
