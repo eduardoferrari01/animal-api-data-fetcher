@@ -25,7 +25,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.com.animal.api.dto.AnimalTo;
+import br.com.animal.api.dto.AnimalInfo;
+import br.com.animal.api.exception.NotFoundException;
 import br.com.animal.api.integration.CnnApi;
 import br.com.animal.api.integration.CnnApiClient;
 import br.com.animal.api.integration.IntegrationResponse;
@@ -63,34 +64,40 @@ public class AnimalControllerTest {
 	}
 
 	@Test
+	void mustCreateNewAnimal() throws Exception {
+		
+		String json = objectMapper.writeValueAsString(AnimalUtil.createAnimalDto());
+	}
+	
+	@Test
 	void mustThrowNotFoundException() throws Exception {
 
-		when(animalService.findByLabel(Mockito.anyString())).thenThrow(NotFoundException.class);
+		when(animalService.findInfoByLabel(Mockito.anyString())).thenThrow(NotFoundException.class);
 		when(cnnApi.classify(Mockito.any())).thenReturn(integrationResponseCreate());
 		
 		mockMvc.perform(MockMvcRequestBuilders.multipart(router).file(file)).andExpect(status().isNotFound())
 				.andReturn();
 		
-		verify(animalService).findByLabel(Mockito.anyString());
+		verify(animalService).findInfoByLabel(Mockito.anyString());
 		verify(cnnApi).classify(Mockito.any());
 	}
 
 	@Test
 	void mustReturnAnimalTo() throws Exception {
 
-		when(animalService.findByLabel(label)).thenReturn(AnimalUtil.createSnakeDto());
+		when(animalService.findInfoByLabel(label)).thenReturn(AnimalUtil.createAnimalInfo());
 		
 		when(cnnApi.classify(Mockito.any())).thenReturn(integrationResponseCreate());
 		
 		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart(router).file(file))
 				.andExpect(status().isOk()).andReturn();
 
-		verify(animalService).findByLabel(label);
+		verify(animalService).findInfoByLabel(label);
 
 		mvcResult.getResponse().setCharacterEncoding(encoding);
 		String jsonResturn = mvcResult.getResponse().getContentAsString();
 
-		AnimalTo animalToResponse = objectMapper.readValue(jsonResturn, AnimalTo.class);
+		AnimalInfo animalToResponse = objectMapper.readValue(jsonResturn, AnimalInfo.class);
 
 		validateAnimalTo(animalToResponse);
 	 
@@ -99,18 +106,18 @@ public class AnimalControllerTest {
 	@Test
 	void whenPassingLabelItMustReturnAnimalTo() throws Exception {
 		
-		when(animalService.findByLabel(label)).thenReturn(AnimalUtil.createSnakeDto());
+		when(animalService.findInfoByLabel(label)).thenReturn(AnimalUtil.createAnimalInfo());
 
 		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(router+"/find/{label}", label))
 				.andExpect(status().isOk()).andReturn();
 
-		verify(animalService).findByLabel(label);
+		verify(animalService).findInfoByLabel(label);
 
 		mvcResult.getResponse().setCharacterEncoding(encoding);
 		
 		String jsonResturn = mvcResult.getResponse().getContentAsString();
 
-		AnimalTo animalToResponse = objectMapper.readValue(jsonResturn, AnimalTo.class);
+		AnimalInfo animalToResponse = objectMapper.readValue(jsonResturn, AnimalInfo.class);
 		
 		validateAnimalTo(animalToResponse);
 	}
@@ -118,16 +125,16 @@ public class AnimalControllerTest {
 	@Test
 	void whenPassingLabelThatDoesnExistShouldThrowNotFoundException() throws Exception {
 
-		when(animalService.findByLabel(Mockito.anyString())).thenThrow(NotFoundException.class);
+		when(animalService.findInfoByLabel(Mockito.anyString())).thenThrow(NotFoundException.class);
 
 		mockMvc.perform(MockMvcRequestBuilders.get(router+"/find/{label}", "AAA"))
 				.andExpect(status().isNotFound());
 	
 	}
 	
-	private void validateAnimalTo(AnimalTo animalToResponse) {
+	private void validateAnimalTo(AnimalInfo animalToResponse) {
 		
-		AnimalTo animalDtoExpected = AnimalUtil.createSnakeDto();
+		AnimalInfo animalDtoExpected = AnimalUtil.createAnimalInfo();
 		
 		Assertions.assertNotNull(animalToResponse);
 		Assertions.assertEquals(animalDtoExpected.getAccidentSymptom(), animalToResponse.getAccidentSymptom());

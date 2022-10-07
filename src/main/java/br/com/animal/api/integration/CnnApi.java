@@ -27,4 +27,9 @@ public class CnnApi {
 		LOG.info("Uploading image to API");
 		return cnnApiClient.classify(file);
 	}
+
+	public Boolean existLabel(String label) {
+		 
+		return cnnApiClient.existLabel(label);
+	}
 }

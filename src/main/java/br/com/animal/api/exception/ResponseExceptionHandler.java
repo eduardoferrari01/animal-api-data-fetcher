@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import br.com.animal.api.controller.NotFoundException;
 import feign.RetryableException;
 
 @ControllerAdvice
@@ -53,5 +52,11 @@ public class ResponseExceptionHandler  extends ResponseEntityExceptionHandler{
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_GATEWAY);
 	}
 	
-	 
+	@ExceptionHandler(RuleException.class)
+	public ResponseEntity<ExceptionResponse> handleRuleException(RuleException exception, WebRequest request){
+		
+		LOG.warn(exception.getMessage());
+		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), exception.getMessage(), request.getDescription(false));
+		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+	}
 }

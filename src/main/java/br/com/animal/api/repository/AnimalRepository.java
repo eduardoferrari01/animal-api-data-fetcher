@@ -14,5 +14,6 @@ public interface AnimalRepository extends MongoRepository<Animal,String> {
 	Optional<Animal> findByLabel(String label);
 	
 	List<Animal> findByLabelIn(List<String> labels);
-
+	
+	Boolean existsAnimalByLabel(String label);
 }

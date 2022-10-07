@@ -13,4 +13,5 @@ public class ClientConfiguration {
 	public ErrorDecoder errorDecoder() {
 		return new CustomErrorDecoder();
 	}
+	
 }

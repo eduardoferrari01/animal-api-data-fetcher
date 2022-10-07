@@ -6,17 +6,22 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import br.com.animal.api.dto.AnimalTo;
+import br.com.animal.api.dto.AnimalDto;
+import br.com.animal.api.dto.AnimalInfo;
 import br.com.animal.api.integration.CnnApi;
 import br.com.animal.api.service.AnimalService;
 
@@ -30,22 +35,38 @@ public class AnimalController {
 	@Autowired
 	private CnnApi cnnApi;
 	
+	@PostMapping(value = "/create")
+	public ResponseEntity<AnimalDto> create(@RequestBody AnimalDto dto){
+		
+		LOG.info("Create new animal {}", dto.getLabel());
+		AnimalDto animalDto = animalService.createNewAnimal(dto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(animalDto);
+	}
+	
+	@PutMapping(value = "/update")
+	public ResponseEntity<AnimalDto> update(@RequestBody AnimalDto dto){
+		
+		LOG.info("Update animal {}", dto.getId());
+		AnimalDto animalDto = animalService.update(dto);
+		return ResponseEntity.ok(animalDto);
+	}
+	
 	@PostMapping(value = "/information", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-	public ResponseEntity<AnimalTo> information(@RequestParam("file") MultipartFile file) throws IOException {
+	public ResponseEntity<AnimalInfo> information(@RequestParam("file") MultipartFile file) throws IOException {
 
 		    LOG.info("Image received {}", file.getOriginalFilename());
 		    String label = cnnApi.classify(file).getLabel();
-			AnimalTo animalTo = animalService.findByLabel(label);
+			AnimalInfo animalInfo = animalService.findInfoByLabel(label);
 			LOG.info("Reply sent to customer");
-			return ResponseEntity.ok(animalTo);
+			return ResponseEntity.ok(animalInfo);
 	}
 
 	@GetMapping(value = "/information/find/{label}")
-	public ResponseEntity<AnimalTo> findByLabel(@PathVariable String label) {
+	public ResponseEntity<AnimalInfo> findByLabel(@PathVariable String label) {
 
 		LOG.info("Label {}", label);
-		AnimalTo animalTo = animalService.findByLabel(label);
-		return ResponseEntity.ok(animalTo);
+		AnimalInfo animalInfo = animalService.findInfoByLabel(label);
+		return ResponseEntity.ok(animalInfo);
 	}
 	
 	@GetMapping(value = "/find/labels/available")

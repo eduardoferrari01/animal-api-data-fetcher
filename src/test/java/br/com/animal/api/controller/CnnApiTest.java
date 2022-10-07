@@ -20,6 +20,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import br.com.animal.api.integration.CnnApi;
 import br.com.animal.api.integration.CnnApiClient;
 import br.com.animal.api.integration.IntegrationResponse;
+import br.com.animal.api.util.AnimalUtil;
 
 @ExtendWith(MockitoExtension.class)
 public class CnnApiTest {
@@ -41,6 +42,16 @@ public class CnnApiTest {
 		Assertions.assertFalse(labels.isEmpty());
 		Assertions.assertEquals(2, labels.size());
 		Assertions.assertIterableEquals(Arrays.asList("label1", "label2"), labels);
+	}
+	
+	@Test
+	void mustReturnTrueWhenLabelExists() {
+		
+		when(cnnApiClient.existLabel(AnimalUtil.getLabel())).thenReturn(Boolean.TRUE);
+		
+		boolean exist = cnnApi.existLabel(AnimalUtil.getLabel());
+		
+		Assertions.assertNotNull(exist);
 	}
 	
 	@Test

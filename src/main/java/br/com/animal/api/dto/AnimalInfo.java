@@ -1,6 +1,6 @@
 package br.com.animal.api.dto;
 
-public class AnimalTo {
+public class AnimalInfo {
  
 	private String label;
 	private String popularNames;
