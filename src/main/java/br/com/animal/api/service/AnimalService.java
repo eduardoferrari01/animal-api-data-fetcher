@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 import br.com.animal.api.builder.AnimalBuilder;
 import br.com.animal.api.domain.Animal;
-import br.com.animal.api.dto.AnimalInfo;
 import br.com.animal.api.dto.AnimalDto;
+import br.com.animal.api.dto.AnimalInfo;
 import br.com.animal.api.exception.NotFoundException;
 import br.com.animal.api.exception.RuleException;
 import br.com.animal.api.integration.CnnApi;

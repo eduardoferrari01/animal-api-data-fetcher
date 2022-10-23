@@ -18,11 +18,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.com.animal.api.domain.Animal;
+import br.com.animal.api.domain.Animal.TypeOfAnimal;
 import br.com.animal.api.dto.AnimalDto;
 import br.com.animal.api.dto.AnimalInfo;
 import br.com.animal.api.exception.NotFoundException;
 import br.com.animal.api.exception.RuleException;
-import br.com.animal.api.integration.CnnApi;
+import br.com.animal.api.integration.CnnApiProd;
 import br.com.animal.api.repository.AnimalRepository;
 import br.com.animal.api.util.AnimalUtil;
 
@@ -34,7 +35,7 @@ public class AnimalServiceTest {
 	@Mock
 	private AnimalRepository animalRepository;
 	@Mock
-	private CnnApi cnnApi;
+	private CnnApiProd cnnApi;
 	private static Animal animal;
 	private static String label;
 	
@@ -75,6 +76,29 @@ public class AnimalServiceTest {
 		Assertions.assertEquals(returnOfTheSave.getUrlImage(), animalDto.getUrlImage());
 		Assertions.assertEquals(returnOfTheSave.getVenomous(), animalDto.getVenomous());
 		Assertions.assertEquals(returnOfTheSave.getPopularNames(), animalDto.getPopularNames());
+	}
+	
+	@Test
+	void mustCreateArachnidAnimal() {
+
+		when(cnnApi.existLabel(label)).thenReturn(Boolean.TRUE);
+
+		when(animalRepository.existsAnimalByLabel(label)).thenReturn(Boolean.FALSE);
+
+		Animal returnOfTheSave = AnimalUtil.createAnimalDomainWithId();
+		returnOfTheSave.setDentition("");
+		returnOfTheSave.setTypeOfAnimal(TypeOfAnimal.ARACHNID);
+		
+		when(animalRepository.save(Mockito.any())).thenReturn(returnOfTheSave);
+
+		AnimalDto animal = AnimalUtil.createAnimalDto();
+		animal.setDentition(null);
+		animal.setTypeOfAnimal(TypeOfAnimal.ARACHNID);
+		
+		animalService.createNewAnimal(animal);
+		
+		animal.setDentition("");
+		animalService.createNewAnimal(animal);
 	}
 	
 	@Test
@@ -148,17 +172,29 @@ public class AnimalServiceTest {
 	}
 	
 	@Test
-	void mustNotEditAnimalsWhenIdIsNull() {
+	void mustNotEditAnimalsWhenIdIsNullOrEmpty() {
 		
-		RuleException rule = assertThrows(RuleException.class, () -> {
+		final String message = "Id não pode ser null ou vazio";
+		
+		RuleException ruleNull = assertThrows(RuleException.class, () -> {
 			animalService.update(AnimalUtil.createAnimalDto());
 		});
 		
-		Assertions.assertEquals("Id não pode ser null ou vazio", rule.getMessage());
+		Assertions.assertEquals(message, ruleNull.getMessage());
+		
+		RuleException ruleEmpty = assertThrows(RuleException.class, () -> {
+			
+			AnimalDto animal = AnimalUtil.createAnimalDto();
+			animal.setId("");
+			
+			animalService.update(animal);
+		});
+		
+		Assertions.assertEquals(message, ruleEmpty.getMessage());
 	}
 	
 	@Test
-	void mustThrowNotFoundExceptionWhenLabelDoesNotExist(){
+	void mustThrowNotFoundExceptionWhenIdDoesNotExistInEdit(){
 		
 		NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> {
 			animalService.update(AnimalUtil.createAnimalDtoWithId());

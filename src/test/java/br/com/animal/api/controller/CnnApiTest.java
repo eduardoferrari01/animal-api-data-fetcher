@@ -17,7 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 
-import br.com.animal.api.integration.CnnApi;
+import br.com.animal.api.integration.CnnApiProd;
 import br.com.animal.api.integration.CnnApiClient;
 import br.com.animal.api.integration.IntegrationResponse;
 import br.com.animal.api.util.AnimalUtil;
@@ -29,7 +29,7 @@ public class CnnApiTest {
 	private CnnApiClient cnnApiClient;
 	
 	@InjectMocks
-	private CnnApi cnnApi;
+	private CnnApiProd cnnApi;
 	
 	@Test
 	void mustReturnLabels() {
