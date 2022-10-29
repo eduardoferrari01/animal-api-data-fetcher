@@ -6,12 +6,16 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.animal.api.builder.AnimalBuilder;
 import br.com.animal.api.domain.Animal;
 import br.com.animal.api.dto.AnimalDto;
 import br.com.animal.api.dto.AnimalInfo;
+import br.com.animal.api.dto.AnimalShort;
 import br.com.animal.api.exception.NotFoundException;
 import br.com.animal.api.exception.RuleException;
 import br.com.animal.api.integration.CnnApi;
@@ -26,6 +30,7 @@ public class AnimalService {
 	private CnnApi cnnApi;
 	private static final Logger LOG = LoggerFactory.getLogger(AnimalService.class);
 
+	@CacheEvict(value = {"animals", "animals-short"} , allEntries = true)
 	public AnimalDto createNewAnimal(AnimalDto dto) {
 		
 		boolean cnnRecognizesLabel = cnnApi.existLabel(dto.getLabel());
@@ -50,6 +55,7 @@ public class AnimalService {
 		return animalBuilder.toAnimalDto(animalCreate);
 	}
 	
+	@CacheEvict(value = {"animals", "animals-short"} , allEntries = true)
 	public AnimalDto update(AnimalDto dto) {
 		
 		if(dto.getId() == null || dto.getId().isBlank()) {
@@ -74,6 +80,13 @@ public class AnimalService {
 			throw new NotFoundException("Nenhum animal encontrado com o id: "+ dto.getId());
 		}
 		
+	}
+	
+	public Page<AnimalShort> findAllShort(Pageable pagination){
+		
+		Page<Animal> animals = animalRepository.findAll(pagination);
+	
+		return animals.map(AnimalBuilder::toAnimalShort);
 	}
 	
 	public AnimalInfo findInfoByLabel(String label) {

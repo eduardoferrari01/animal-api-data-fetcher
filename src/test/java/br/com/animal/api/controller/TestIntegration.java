@@ -24,11 +24,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.animal.api.builder.AnimalBuilder;
-import br.com.animal.api.domain.AccidentSymptom;
 import br.com.animal.api.domain.Animal;
-import br.com.animal.api.domain.ConservationState;
-import br.com.animal.api.domain.TypeAccident;
 import br.com.animal.api.domain.Animal.TypeOfAnimal;
+import br.com.animal.api.domain.ConservationState;
 import br.com.animal.api.dto.AnimalDto;
 import br.com.animal.api.dto.AnimalInfo;
 import br.com.animal.api.repository.AnimalRepository;
@@ -305,7 +303,37 @@ public class TestIntegration {
 				.andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.[0]").value("oxyuranus-microlepidotus"))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.[1]").value("titanoboa-cerrejonensis"));
-
 	}
+	
+	@Test
+	void mustReturnAnimalShort() throws Exception {
+
+		Animal animal = animalRepository.findAll().stream().findFirst().get();
+		
+		String id = animal.getId();
+		String label = animal.getLabel();
+		
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/animal/list?page=0&size=30&sort=id,asc"))
+				.andExpect(status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$").hasJsonPath())
+				.andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[0].id").value(id))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[0].label").value(label))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.totalPages").value(1))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.sort.sorted").value(true))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.size").value(30))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.number").value(0));
+		
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/animal/list"))
+				.andExpect(status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$").hasJsonPath())
+				.andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[0].id").value(id))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[0].label").value(label))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.totalPages").value(1))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.sort.sorted").value(true))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.size").value(15))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.number").value(0));
+	 }
 
 }

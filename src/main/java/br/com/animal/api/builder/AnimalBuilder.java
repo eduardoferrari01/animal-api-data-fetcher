@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import br.com.animal.api.domain.AccidentSymptom;
 import br.com.animal.api.domain.Animal;
 import br.com.animal.api.dto.AnimalInfo;
+import br.com.animal.api.dto.AnimalShort;
 import br.com.animal.api.dto.AnimalDto;
 
 public class AnimalBuilder {
@@ -109,5 +110,14 @@ public class AnimalBuilder {
 		animalDto.setUrlImage(animal.getUrlImage());
 		
 		return animalDto;
+	}
+	
+	public static AnimalShort toAnimalShort(Animal animal) {
+		
+		AnimalShort animalShort = new AnimalShort();
+		animalShort.setId(animal.getId());
+		animalShort.setLabel(animal.getLabel());
+		
+		return animalShort;
 	}
 }

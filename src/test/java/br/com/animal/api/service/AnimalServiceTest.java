@@ -16,11 +16,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 
 import br.com.animal.api.domain.Animal;
 import br.com.animal.api.domain.Animal.TypeOfAnimal;
 import br.com.animal.api.dto.AnimalDto;
 import br.com.animal.api.dto.AnimalInfo;
+import br.com.animal.api.dto.AnimalShort;
 import br.com.animal.api.exception.NotFoundException;
 import br.com.animal.api.exception.RuleException;
 import br.com.animal.api.integration.CnnApiProd;
@@ -256,5 +262,30 @@ public class AnimalServiceTest {
 		Assertions.assertFalse(labels.isEmpty());
 		Assertions.assertEquals(2, labels.size());
 		Assertions.assertIterableEquals(Arrays.asList("label3", "label4"), labels);
+	}
+	
+	@Test
+	void mustReturnAnimalShort() {
+		
+		PageImpl<Animal> pageImpl = new PageImpl<>(Arrays.asList(AnimalUtil.createAnimalDomainWithId()), PageRequest.of(0, 10, Direction.ASC, "id"), 0);
+		
+		when(animalRepository.findAll(Mockito.any(Pageable.class))).thenReturn(pageImpl);
+		
+		Page<AnimalShort> page = animalService.findAllShort(PageRequest.of(0, 10, Direction.ASC, "id"));
+		
+		verify(animalRepository).findAll(Mockito.any(Pageable.class));
+		
+		Assertions.assertNotNull(page);
+		Assertions.assertFalse(page.isEmpty());
+		Assertions.assertEquals(0, page.getNumber());
+		Assertions.assertEquals(10, page.getSize());
+		Assertions.assertEquals(1, page.getTotalElements());
+		Assertions.assertEquals(1, page.getTotalPages());
+		Assertions.assertTrue(page.getSort().isSorted());
+		
+		AnimalShort animalShort = page.getContent().get(0);
+		Assertions.assertEquals(AnimalUtil.getId(), animalShort.getId());
+		Assertions.assertEquals(AnimalUtil.getLabel(), animalShort.getLabel());
+	
 	}
 }

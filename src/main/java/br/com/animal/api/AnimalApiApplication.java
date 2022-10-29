@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 @EnableCaching
 @EnableFeignClients
 @EnableAutoConfiguration
+@EnableSpringDataWebSupport
 public class AnimalApiApplication {
 
 	public static void main(String[] args) {
