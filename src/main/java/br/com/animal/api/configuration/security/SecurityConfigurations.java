@@ -7,57 +7,44 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import br.com.animal.api.dto.MockDB;
-import br.com.animal.api.service.AutenticacaoTokenService;
+import br.com.animal.api.service.UserService;
 
 @EnableWebSecurity
 @Configuration
-public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
+public class SecurityConfigurations  {
 
-	@Autowired
-	private AuthenticationService authenticationService;
 	@Autowired
 	private AutenticacaoTokenService autenticacaoTokenService;
 	@Autowired
-	private MockDB mockDB;
+	private UserService userService;
 	
-	
-	@Override
 	@Bean
-	protected AuthenticationManager authenticationManager() throws Exception {
-		// TODO Auto-generated method stub
-		return super.authenticationManager();
+	public AuthenticationManager authManager(HttpSecurity http, AuthenticationService userDetailService) 
+	  throws Exception {
+	    return http.getSharedObject(AuthenticationManagerBuilder.class)
+	      .userDetailsService(userDetailService)
+	      .passwordEncoder(new BCryptPasswordEncoder())
+	      .and()
+	      .build();
 	}
 	
-	// configurações de autenticação
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		   auth.userDetailsService(authenticationService).passwordEncoder(new BCryptPasswordEncoder());
-	}
-
-	// configurações de aturizacao
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		
+	@Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        
 		http.authorizeRequests()
 	       .antMatchers(HttpMethod.GET ,"/api/animal/information/**").permitAll()
 	       .antMatchers(HttpMethod.POST ,"/api/animal/information/**").permitAll()
 	       .antMatchers(HttpMethod.POST, "/api/auth/").permitAll()
 	       .anyRequest().authenticated()
 	       .and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-	       .addFilterBefore(new AuthenticationViaTokenFilter(autenticacaoTokenService, mockDB), UsernamePasswordAuthenticationFilter.class);
-	}
+	       .addFilterBefore(new AuthenticationViaTokenFilter(autenticacaoTokenService, userService), UsernamePasswordAuthenticationFilter.class);
 
-	// configurações de recursos estaticos(js,cs etc)
-	@Override
-	public void configure(WebSecurity web) throws Exception {
-	
-	}
+		return http.build();
+    }
 }

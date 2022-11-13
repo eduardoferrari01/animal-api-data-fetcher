@@ -9,18 +9,18 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import br.com.animal.api.domain.User;
-import br.com.animal.api.dto.MockDB;
+import br.com.animal.api.service.UserService;
 
 @Service
 public class AuthenticationService implements UserDetailsService {
 
 	@Autowired
-	private MockDB mockDB;
+	private UserService userService;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		 
-		Optional<User> user = mockDB.getUsuario(username);
+		Optional<User> user = userService.findByLogin(username);
 		
 		if(user.isPresent()) {
 			

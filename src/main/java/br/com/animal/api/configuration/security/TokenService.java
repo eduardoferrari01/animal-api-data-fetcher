@@ -1,4 +1,4 @@
-package br.com.animal.api.service;
+package br.com.animal.api.configuration.security;
 
 import java.util.Date;
 
@@ -29,7 +29,7 @@ public class TokenService {
 		
 		return Jwts.builder()
 				.setIssuer("API animal")
-				.setSubject(logged.getId().toString())
+				.setSubject(logged.getId())
 				.setIssuedAt(hoje)
 				.setExpiration(dateExpiracao)
 				.signWith(SignatureAlgorithm.HS256, this.secret)
@@ -46,11 +46,11 @@ public class TokenService {
 	    }
 	}
 	
-	public Long getUserId(String token) {
+	public String getUserId(String token) {
 		
 		Claims claims = Jwts.parser().setSigningKey(this.secret).parseClaimsJws(token).getBody();
 		
-		return Long.valueOf(claims.getSubject());
+		return  claims.getSubject();
 	}
 	 
 }

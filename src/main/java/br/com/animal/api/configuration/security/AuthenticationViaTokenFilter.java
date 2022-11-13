@@ -12,17 +12,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import br.com.animal.api.domain.User;
-import br.com.animal.api.dto.MockDB;
-import br.com.animal.api.service.AutenticacaoTokenService;
+import br.com.animal.api.service.UserService;
 
 public class AuthenticationViaTokenFilter extends OncePerRequestFilter {
 
 	private AutenticacaoTokenService autenticacaoService;
-	private MockDB mockDB;
+	private UserService userService;
 	
-	public AuthenticationViaTokenFilter(AutenticacaoTokenService autenticacaoService, MockDB mockDB) {
+	public AuthenticationViaTokenFilter(AutenticacaoTokenService autenticacaoService, UserService mockDB) {
 		 this.autenticacaoService = autenticacaoService;
-		 this.mockDB = mockDB;
+		 this.userService = mockDB;
 	}
 
 	@Override
@@ -40,9 +39,9 @@ public class AuthenticationViaTokenFilter extends OncePerRequestFilter {
 
 	private void authenticateClient(String token) {
 		
-		Long userId = autenticacaoService.getUserId(token);
+		String userId = autenticacaoService.getUserId(token);
 		
-		User user = mockDB.getUsuarioById(userId);
+		User user = userService.findById(userId);
 		
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 		

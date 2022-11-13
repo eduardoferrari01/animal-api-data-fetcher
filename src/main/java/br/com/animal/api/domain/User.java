@@ -3,22 +3,26 @@ package br.com.animal.api.domain;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+@Document
 public class User implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
 
-	private Long id;
+	@Id
+	private String id;
 	private String login;
 	private String password;
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
