@@ -5,6 +5,8 @@ public class TokenDTO {
 	private String toke;
 	private String type;
 
+	public TokenDTO() {}
+	
 	public TokenDTO(String toke, String type) {
 		this.toke = toke;
 		this.type = type;

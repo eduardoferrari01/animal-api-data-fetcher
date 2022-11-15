@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -25,11 +26,16 @@ public class SecurityConfigurations  {
 	private UserService userService;
 	
 	@Bean
+	public PasswordEncoder passwordEncoder() {
+	        return new BCryptPasswordEncoder();    
+	}
+	
+	@Bean
 	public AuthenticationManager authManager(HttpSecurity http, AuthenticationService userDetailService) 
 	  throws Exception {
 	    return http.getSharedObject(AuthenticationManagerBuilder.class)
 	      .userDetailsService(userDetailService)
-	      .passwordEncoder(new BCryptPasswordEncoder())
+	      .passwordEncoder(passwordEncoder())
 	      .and()
 	      .build();
 	}

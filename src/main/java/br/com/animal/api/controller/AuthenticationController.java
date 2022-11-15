@@ -5,7 +5,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,15 +24,9 @@ public class AuthenticationController {
 	private AuthenticationManager authManager;
 	
 	@PostMapping
-	public ResponseEntity<?> authenticate(@RequestBody @Valid LoginFormDTO loginForm) {
+	public ResponseEntity<TokenDTO> authenticate(@RequestBody @Valid LoginFormDTO loginForm) {
 
-		try {
 			TokenDTO tokenDTO = autenticacaoService.authenticate(loginForm, authManager);
 			return ResponseEntity.ok().body(tokenDTO);
-
-		} catch (AuthenticationException e) {
-			return ResponseEntity.badRequest().build();
-		}
-
 	}
 }

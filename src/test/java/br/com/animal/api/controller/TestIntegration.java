@@ -11,11 +11,15 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -24,13 +28,18 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.animal.api.builder.AnimalBuilder;
+import br.com.animal.api.configuration.security.AutenticacaoTokenService;
 import br.com.animal.api.domain.Animal;
 import br.com.animal.api.domain.Animal.TypeOfAnimal;
 import br.com.animal.api.domain.ConservationState;
+import br.com.animal.api.domain.User;
 import br.com.animal.api.dto.AnimalDto;
 import br.com.animal.api.dto.AnimalInfo;
+import br.com.animal.api.dto.TokenDTO;
 import br.com.animal.api.repository.AnimalRepository;
+import br.com.animal.api.repository.UserRepository;
 import br.com.animal.api.util.AnimalUtil;
+import br.com.animal.api.util.AuthenticateUserUtil;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(SpringExtension.class)
@@ -38,6 +47,8 @@ import br.com.animal.api.util.AnimalUtil;
 @AutoConfigureMockMvc
 public class TestIntegration {
 
+	private static final Logger LOG = LoggerFactory.getLogger(TestIntegration.class);
+	
 	@Autowired
 	private AnimalRepository animalRepository;
 	@Autowired
@@ -45,6 +56,15 @@ public class TestIntegration {
 	private static MockMultipartFile file;
 	private String router = "/api/animal/information";
 	private static ObjectMapper objectMapper;
+	//Spring security
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private AutenticacaoTokenService autenticacaoService;
+	@Autowired
+	private AuthenticationManager authManager;
+	private String headerName;
+	private String headerValues;
 	
 	@BeforeAll
 	void setup() throws IOException {
@@ -55,8 +75,25 @@ public class TestIntegration {
 		objectMapper = new ObjectMapper();
 		
 		animalRepository.save(AnimalUtil.createAnimalDomain());
+		
+		authentication();
 	}
+	
+	private void authentication() {
 
+		try {
+			userRepository.deleteAll();
+			userRepository.save(AuthenticateUserUtil.userCreate());
+			TokenDTO tokenDTO = autenticacaoService.authenticate(AuthenticateUserUtil.LoginFormDTOCreate(),
+					authManager);
+			headerName = AuthenticateUserUtil.getHeaderName();
+			headerValues = AuthenticateUserUtil.getHeaderValues(tokenDTO.getToke());
+
+		} catch (BadCredentialsException e) {
+			LOG.error(e.getLocalizedMessage(), e);
+		}
+	}
+	
 	@Test
 	void mustCreateNewAnimal() throws Exception {
 		
@@ -66,7 +103,8 @@ public class TestIntegration {
 		String json = objectMapper.writeValueAsString(animalDto);
 		
 		mockMvc.perform(MockMvcRequestBuilders.post("/api/animal/create").content(json)
-				.contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isCreated())
+				.contentType(MediaType.APPLICATION_JSON_VALUE).header(headerName, headerValues))
+				.andExpect(status().isCreated())
 				.andExpect(MockMvcResultMatchers.jsonPath("$").hasJsonPath())
 				.andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.label").value(animalDto.getLabel()))
@@ -95,7 +133,7 @@ public class TestIntegration {
 		String json = objectMapper.writeValueAsString(animalDto);
 		
 		mockMvc.perform(MockMvcRequestBuilders.post("/api/animal/create").content(json)
-				.contentType(MediaType.APPLICATION_JSON_VALUE))
+				.contentType(MediaType.APPLICATION_JSON_VALUE).header(headerName, headerValues))
 				.andExpect(status().isBadRequest())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.date").isNotEmpty())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Cnn não reconhece a label: XXX"))
@@ -112,7 +150,7 @@ public class TestIntegration {
 		String json = objectMapper.writeValueAsString(animalDto);
 		
 		mockMvc.perform(MockMvcRequestBuilders.post("/api/animal/create").content(json)
-				.contentType(MediaType.APPLICATION_JSON_VALUE))
+				.contentType(MediaType.APPLICATION_JSON_VALUE).header(headerName, headerValues))
 				.andExpect(status().isBadRequest())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.date").isNotEmpty())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Label já cadastrada"))
@@ -129,7 +167,7 @@ public class TestIntegration {
 		String json = objectMapper.writeValueAsString(animalDto);
 		
 		mockMvc.perform(MockMvcRequestBuilders.post("/api/animal/create").content(json)
-				.contentType(MediaType.APPLICATION_JSON_VALUE))
+				.contentType(MediaType.APPLICATION_JSON_VALUE).header(headerName, headerValues))
 				.andExpect(status().isBadRequest())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.date").isNotEmpty())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Aracnídeo não pode ter dentição definida"))
@@ -166,7 +204,8 @@ public class TestIntegration {
 		String json = objectMapper.writeValueAsString(animalDto);
 		
 		mockMvc.perform(MockMvcRequestBuilders.put("/api/animal/update").content(json)
-			    .contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isOk())
+			    .contentType(MediaType.APPLICATION_JSON_VALUE).header(headerName, headerValues))
+				.andExpect(status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$").hasJsonPath())
 				.andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.label").value(animalDto.getLabel()))
@@ -197,7 +236,7 @@ public class TestIntegration {
 		String json = objectMapper.writeValueAsString(animalDto);
 		
 		mockMvc.perform(MockMvcRequestBuilders.put("/api/animal/update").content(json)
-				.contentType(MediaType.APPLICATION_JSON_VALUE))
+				.contentType(MediaType.APPLICATION_JSON_VALUE).header(headerName, headerValues))
 				.andExpect(status().isBadRequest())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.date").isNotEmpty())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.message").value(message))
@@ -217,7 +256,7 @@ public class TestIntegration {
 		String json = objectMapper.writeValueAsString(animalDto);
 		
 		mockMvc.perform(MockMvcRequestBuilders.put("/api/animal/update").content(json)
-				.contentType(MediaType.APPLICATION_JSON_VALUE))
+				.contentType(MediaType.APPLICATION_JSON_VALUE).header(headerName, headerValues))
 				.andExpect(status().isNotFound())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.date").isNotEmpty())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.message").value(messsage))
@@ -297,7 +336,9 @@ public class TestIntegration {
 	@Test
 	void mustReturnLabelsAvailableForRegistration() throws Exception {
 
-		mockMvc.perform(MockMvcRequestBuilders.get("/api/animal/find/labels/available/")).andExpect(status().isOk())
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/animal/find/labels/available/")
+				.header(headerName, headerValues))
+				.andExpect(status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$").hasJsonPath())
 				.andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
 				.andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty())
@@ -312,8 +353,9 @@ public class TestIntegration {
 		
 		String id = animal.getId();
 		String label = animal.getLabel();
-		
-		mockMvc.perform(MockMvcRequestBuilders.get("/api/animal/list?page=0&size=30&sort=id,asc"))
+	 
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/animal/list?page=0&size=30&sort=id,asc")
+				.header(headerName, headerValues))
 				.andExpect(status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$").hasJsonPath())
 				.andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty())
@@ -324,7 +366,8 @@ public class TestIntegration {
 				.andExpect(MockMvcResultMatchers.jsonPath("$.size").value(30))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.number").value(0));
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("/api/animal/list"))
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/animal/list")
+				.header(headerName, headerValues))
 				.andExpect(status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$").hasJsonPath())
 				.andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty())
