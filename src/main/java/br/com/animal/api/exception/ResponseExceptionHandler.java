@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,4 +60,13 @@ public class ResponseExceptionHandler  extends ResponseEntityExceptionHandler{
 		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), exception.getMessage(), request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
+	
+	@ExceptionHandler(BadCredentialsException.class)
+	public ResponseEntity<ExceptionResponse> handleBadCredentialsException(BadCredentialsException exception, WebRequest request){
+		
+		LOG.warn(exception.getMessage());
+		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), "Sua conta ou senha está incorreta", request.getDescription(false));
+		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+	}
+	
 }
