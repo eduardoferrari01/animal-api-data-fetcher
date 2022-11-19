@@ -16,7 +16,7 @@ import br.com.animal.api.dto.TokenDTO;
 
 @RestController
 @RequestMapping("/api/auth/")
-public class AuthenticationController {
+public class AuthenticationController implements AuthenticationlSwagger {
 
 	@Autowired
 	private AutenticacaoTokenService autenticacaoService;

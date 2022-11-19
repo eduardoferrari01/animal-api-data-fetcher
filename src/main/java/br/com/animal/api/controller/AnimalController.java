@@ -31,8 +31,8 @@ import br.com.animal.api.service.AnimalService;
 
 @RestController
 @RequestMapping("/api/animal/")
-public class AnimalController {
-
+public class AnimalController implements AnimalSwagger {
+	
 	@Autowired
 	private AnimalService animalService;
 	private static final Logger LOG = LoggerFactory.getLogger(AnimalController.class);

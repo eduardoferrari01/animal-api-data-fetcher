@@ -7,11 +7,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
-
 @SpringBootApplication
-@OpenAPIDefinition(info = @Info(title = "Animal API", version = "1.0", description = "Information"))
 @EnableCaching
 @EnableFeignClients
 @EnableAutoConfiguration
