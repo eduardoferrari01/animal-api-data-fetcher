@@ -42,7 +42,7 @@ public class AnimalController implements AnimalSwagger {
 	@PostMapping(value = "/create")
 	public ResponseEntity<AnimalDto> create(@RequestBody AnimalDto dto){
 		
-		LOG.info("Create new animal {}", dto.getLabel());
+		LOG.info("Create new animal {}", dto.label());
 		AnimalDto animalDto = animalService.createNewAnimal(dto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(animalDto);
 	}
@@ -50,7 +50,7 @@ public class AnimalController implements AnimalSwagger {
 	@PutMapping(value = "/update")
 	public ResponseEntity<AnimalDto> update(@RequestBody AnimalDto dto){
 		
-		LOG.info("Update animal {}", dto.getId());
+		LOG.info("Update animal {}", dto.id());
 		AnimalDto animalDto = animalService.update(dto);
 		return ResponseEntity.ok(animalDto);
 	}

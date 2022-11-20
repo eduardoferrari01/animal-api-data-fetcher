@@ -5,9 +5,9 @@ import org.slf4j.LoggerFactory;
 
 import br.com.animal.api.domain.AccidentSymptom;
 import br.com.animal.api.domain.Animal;
+import br.com.animal.api.dto.AnimalDto;
 import br.com.animal.api.dto.AnimalInfo;
 import br.com.animal.api.dto.AnimalShort;
-import br.com.animal.api.dto.AnimalDto;
 
 public class AnimalBuilder {
 
@@ -15,50 +15,48 @@ public class AnimalBuilder {
 	
 	public AnimalInfo toAnimalInfo(Animal animal) {
 		
-		AnimalInfo animalResponse = new AnimalInfo();
+		AnimalInfo animalInfo = new AnimalInfo(animal.getLabel(), 
+				String.join(", ", animal.getPopularNames()), 
+				animal.getConservationState().getLabel(), 
+				animal.getAntivenom(),
+				animal.getEtymology(), 
+				animal.getVenomous() ? "Sim" : "Não", 
+				animal.getCanCauseSeriousAccident() ? "Sim" : "Não", 
+				animal.getSpecies(), 
+				animal.getFamily(),
+				animal.getGenre(),
+				animal.getDentition(), 
+				animal.getHabitat(), 
+				animal.getUrlImage(),
+				animal.getCharacteristics(), 
+				animal.getAccidentSymptom().getDescription());
 		
-		animalResponse.setLabel(animal.getLabel());
-		animalResponse.setAccidentSymptom(animal.getAccidentSymptom().getDescription());
-		animalResponse.setAntivenom(animal.getAntivenom());
-		animalResponse.setVenomous(animal.getVenomous() ? "Sim" : "Não");
-		animalResponse.setCanCauseSeriousAccident(animal.getCanCauseSeriousAccident() ? "Sim" : "Não");
-		animalResponse.setSpecies(animal.getSpecies());
-		animalResponse.setPopularNames(String.join(", ", animal.getPopularNames()));
-		animalResponse.setFamily(animal.getFamily());
-		animalResponse.setGenre(animal.getGenre());
-		animalResponse.setDentition(animal.getDentition());
-		animalResponse.setHabitat(animal.getHabitat());
-		animalResponse.setEtymology(animal.getEtymology());
-		animalResponse.setConservationState(animal.getConservationState().getLabel());
-		animalResponse.setCharacteristics(animal.getCharacteristics());
-		animalResponse.setUrlImage(animal.getUrlImage());
+		LOG.info("DTO response created: {}", animalInfo);
 		
-		LOG.info("DTO response created: {}", animalResponse);
-		
-		return animalResponse;
+		return animalInfo;
 	}
 	
 	public Animal toAnimal(AnimalDto dto) {
 		
 		Animal animal = new Animal();
-		animal.setId(dto.getId());
-		animal.setLabel(dto.getLabel());
-		animal.setPopularNames(dto.getPopularNames());
-		animal.setConservationState(dto.getConservationState());
-		animal.setAntivenom(dto.getAntivenom());
-		animal.setEtymology(dto.getEtymology());
-		animal.setVenomous(dto.getVenomous());
-		animal.setCanCauseSeriousAccident(dto.getCanCauseSeriousAccident());
-		animal.setSpecies(dto.getSpecies());
-		animal.setFamily(dto.getFamily());
-		animal.setGenre(dto.getGenre());
-		animal.setDentition(dto.getDentition());
-		animal.setHabitat(dto.getHabitat());
-		animal.setCharacteristics(dto.getCharacteristics());
-		animal.setTypeOfAnimal(dto.getTypeOfAnimal());
-		animal.setUrlImage(dto.getUrlImage());
+		animal.setId(dto.id());
+		animal.setLabel(dto.label());
+		animal.setPopularNames(dto.popularNames());
+		animal.setConservationState(dto.conservationState());
+		animal.setAntivenom(dto.antivenom());
+		animal.setEtymology(dto.etymology());
+		animal.setVenomous(dto.venomous());
+		animal.setCanCauseSeriousAccident(dto.canCauseSeriousAccident());
+		animal.setSpecies(dto.species());
+		animal.setFamily(dto.family());
+		animal.setGenre(dto.genre());
+		animal.setDentition(dto.dentition());
+		animal.setHabitat(dto.habitat());
+		animal.setCharacteristics(dto.characteristics());
+		animal.setTypeOfAnimal(dto.typeOfAnimal());
+		animal.setUrlImage(dto.urlImage());
 		AccidentSymptom accidentSymptom = new AccidentSymptom();
-		accidentSymptom.setDescription(dto.getAccidentSymptom());
+		accidentSymptom.setDescription(dto.accidentSymptom());
 		animal.setAccidentSymptom(accidentSymptom);
 		
 		return animal;
@@ -66,58 +64,51 @@ public class AnimalBuilder {
 	
 	public Animal editAnimal(AnimalDto dto, Animal animal) {
 		
-		animal.setPopularNames(dto.getPopularNames());
-		animal.setConservationState(dto.getConservationState());
-		animal.setAntivenom(dto.getAntivenom());
-		animal.setEtymology(dto.getEtymology());
-		animal.setVenomous(dto.getVenomous());
-		animal.setCanCauseSeriousAccident(dto.getCanCauseSeriousAccident());
-		animal.setSpecies(dto.getSpecies());
-		animal.setFamily(dto.getFamily());
-		animal.setGenre(dto.getGenre());
-		animal.setDentition(dto.getDentition());
-		animal.setTypeOfAnimal(dto.getTypeOfAnimal());
-		animal.setHabitat(dto.getHabitat());
-		animal.setCharacteristics(dto.getCharacteristics());
-		animal.setUrlImage(dto.getUrlImage());
+		animal.setPopularNames(dto.popularNames());
+		animal.setConservationState(dto.conservationState());
+		animal.setAntivenom(dto.antivenom());
+		animal.setEtymology(dto.etymology());
+		animal.setVenomous(dto.venomous());
+		animal.setCanCauseSeriousAccident(dto.canCauseSeriousAccident());
+		animal.setSpecies(dto.species());
+		animal.setFamily(dto.family());
+		animal.setGenre(dto.genre());
+		animal.setDentition(dto.dentition());
+		animal.setTypeOfAnimal(dto.typeOfAnimal());
+		animal.setHabitat(dto.habitat());
+		animal.setCharacteristics(dto.characteristics());
+		animal.setUrlImage(dto.urlImage());
 		AccidentSymptom accidentSymptom = new AccidentSymptom();
 		accidentSymptom.setId(animal.getAccidentSymptom().getId());
-		accidentSymptom.setDescription(dto.getAccidentSymptom());
+		accidentSymptom.setDescription(dto.accidentSymptom());
 		animal.setAccidentSymptom(accidentSymptom);
 		
 		return animal;
 	}
 	
 	public AnimalDto toAnimalDto(Animal animal) {
-		
-		AnimalDto animalDto = new AnimalDto();
-		animalDto.setId(animal.getId());
-		animalDto.setLabel(animal.getLabel());
-		animalDto.setPopularNames(animal.getPopularNames());
-		animalDto.setConservationState(animal.getConservationState());
-		animalDto.setAntivenom(animal.getAntivenom());
-		animalDto.setEtymology(animal.getEtymology());
-		animalDto.setVenomous(animal.getVenomous());
-		animalDto.setCanCauseSeriousAccident(animal.getCanCauseSeriousAccident());
-		animalDto.setSpecies(animal.getSpecies());
-		animalDto.setFamily(animal.getFamily());
-		animalDto.setGenre(animal.getGenre());
-		animalDto.setDentition(animal.getDentition());
-		animalDto.setHabitat(animal.getHabitat());
-		animalDto.setCharacteristics(animal.getCharacteristics());
-		animalDto.setTypeOfAnimal(animal.getTypeOfAnimal());
-		animalDto.setAccidentSymptom(animal.getAccidentSymptom().getDescription());
-		animalDto.setUrlImage(animal.getUrlImage());
-		
-		return animalDto;
+
+		return new AnimalDto(animal.getId(), 
+				animal.getLabel(), 
+				animal.getPopularNames(), 
+				animal.getConservationState(),
+				animal.getAntivenom(), 
+				animal.getEtymology(), 
+				animal.getVenomous(), 
+				animal.getCanCauseSeriousAccident(),
+				animal.getSpecies(), 
+				animal.getFamily(), 
+				animal.getGenre(), 
+				animal.getDentition(), 
+				animal.getHabitat(),
+				animal.getUrlImage(), 
+				animal.getCharacteristics(), 
+				animal.getAccidentSymptom().getDescription(),
+				animal.getTypeOfAnimal());
 	}
 	
 	public static AnimalShort toAnimalShort(Animal animal) {
 		
-		AnimalShort animalShort = new AnimalShort();
-		animalShort.setId(animal.getId());
-		animalShort.setLabel(animal.getLabel());
-		
-		return animalShort;
+		return new AnimalShort(animal.getId(), animal.getLabel());
 	}
 }

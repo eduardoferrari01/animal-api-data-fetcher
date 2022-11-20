@@ -52,8 +52,8 @@ public class TestAuthenticationIntegration {
 	@Test
 	void mustAuthenticateUser() throws Exception {
 		
-		String json = objectMapper.writeValueAsString(AuthenticateUserUtil.LoginFormDTOCreate());
-		
+		String json = objectMapper.writeValueAsString(AuthenticateUserUtil.LoginFormCreate().loginForm().build());
+
 		MvcResult mvcResult =  mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/")
 				.content(json).contentType(MediaType.APPLICATION_JSON_VALUE))
 				.andExpect(status().isOk()).andReturn();
@@ -66,15 +66,14 @@ public class TestAuthenticationIntegration {
 		TokenDTO tokenDTO = objectMapper.readValue(jsonResponse, TokenDTO.class);
 		
 		Assertions.assertNotNull(tokenDTO);
-		Assertions.assertTrue(tokenService.tokenIsValid(tokenDTO.getToke()));
-		Assertions.assertEquals(AuthenticateUserUtil.getBearer(), tokenDTO.getType());
+		Assertions.assertTrue(tokenService.tokenIsValid(tokenDTO.toke()));
+		Assertions.assertEquals(AuthenticateUserUtil.getBearer(), tokenDTO.type());
 	}
 	
 	@Test
 	void mustNotAuthenticate() throws Exception {
 		
-		LoginFormDTO loginDto =  AuthenticateUserUtil.LoginFormDTOCreate();
-		loginDto.setLogin("321");
+		LoginFormDTO loginDto =  AuthenticateUserUtil.LoginFormCreate().loginFormWrongPassword().build();
 		
 		String json = objectMapper.writeValueAsString(loginDto);
 		

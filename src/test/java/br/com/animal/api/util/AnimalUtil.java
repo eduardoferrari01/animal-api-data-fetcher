@@ -29,18 +29,6 @@ public class AnimalUtil {
 		return new AnimalBuilder().toAnimalInfo(createAnimalDomain());
 	}
 	
-	public static AnimalDto createAnimalDto() {
-		
-		return new AnimalBuilder().toAnimalDto(createAnimalDomain());
-	}
-	
-	public static AnimalDto createAnimalDtoWithId() {
-		
-		AnimalDto animal =  new AnimalBuilder().toAnimalDto(createAnimalDomain());
-		animal.setId(id);
-		return animal;
-	}
-	
 	public static Animal createAnimalDomain() {
 		
 		Animal animal = new Animal();
@@ -71,5 +59,38 @@ public class AnimalUtil {
 		Animal animal = createAnimalDomain();
 		animal.setId(id);
 		return animal;
+	}
+	
+	public static BuilderAnimalDto animalDto(Animal animal) {
+
+		return new BuilderAnimalDto(animal);
+	}
+	
+	public static BuilderAnimalDto animalDto() {
+
+		return new BuilderAnimalDto();
+	}
+	
+	public static class BuilderAnimalDto {
+
+		private Animal animal;
+		
+		public BuilderAnimalDto() {
+			
+		}
+		
+		public BuilderAnimalDto(Animal animal) {
+			this.animal = animal;
+		}
+		
+		public AnimalDto build() {
+
+			if (animal == null) {
+
+				return new AnimalBuilder().toAnimalDto(createAnimalDomain());
+			}
+
+			return new AnimalBuilder().toAnimalDto(animal);
+		}
 	}
 }

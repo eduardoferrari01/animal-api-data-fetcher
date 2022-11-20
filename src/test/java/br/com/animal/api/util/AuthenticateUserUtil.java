@@ -19,11 +19,6 @@ public class AuthenticateUserUtil {
 		return new User(login, a.encode(password));
 	}
 
-	public static LoginFormDTO LoginFormDTOCreate() {
-
-		return new LoginFormDTO(login, password);
-	}
-
 	public static String getBearer() {
 		return bearer;
 	}
@@ -36,5 +31,32 @@ public class AuthenticateUserUtil {
 		
 		return "Bearer " + toke;
 	}
+	
+	public static BuilderLoginForm LoginFormCreate() {
 
+		return new BuilderLoginForm();
+	}
+	
+	public static class BuilderLoginForm {
+
+		private static String valueLogin;
+		private static String Valuepassword;
+
+		public BuilderLoginForm loginForm() {
+			valueLogin = login;
+			Valuepassword = password;
+			return this;
+		}
+
+		public BuilderLoginForm loginFormWrongPassword() {
+			valueLogin = login;
+			Valuepassword = "321";
+			return this;
+		}
+
+		public LoginFormDTO build() {
+
+			return new LoginFormDTO(valueLogin, Valuepassword);
+		}
+	}
 }

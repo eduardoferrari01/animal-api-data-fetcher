@@ -29,10 +29,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.animal.api.builder.AnimalBuilder;
 import br.com.animal.api.configuration.security.AutenticacaoTokenService;
+import br.com.animal.api.domain.AccidentSymptom;
 import br.com.animal.api.domain.Animal;
 import br.com.animal.api.domain.Animal.TypeOfAnimal;
 import br.com.animal.api.domain.ConservationState;
-import br.com.animal.api.domain.User;
 import br.com.animal.api.dto.AnimalDto;
 import br.com.animal.api.dto.AnimalInfo;
 import br.com.animal.api.dto.TokenDTO;
@@ -84,10 +84,10 @@ public class TestIntegration {
 		try {
 			userRepository.deleteAll();
 			userRepository.save(AuthenticateUserUtil.userCreate());
-			TokenDTO tokenDTO = autenticacaoService.authenticate(AuthenticateUserUtil.LoginFormDTOCreate(),
+			TokenDTO tokenDTO = autenticacaoService.authenticate(AuthenticateUserUtil.LoginFormCreate().loginForm().build(),
 					authManager);
 			headerName = AuthenticateUserUtil.getHeaderName();
-			headerValues = AuthenticateUserUtil.getHeaderValues(tokenDTO.getToke());
+			headerValues = AuthenticateUserUtil.getHeaderValues(tokenDTO.toke());
 
 		} catch (BadCredentialsException e) {
 			LOG.error(e.getLocalizedMessage(), e);
@@ -97,8 +97,10 @@ public class TestIntegration {
 	@Test
 	void mustCreateNewAnimal() throws Exception {
 		
-		AnimalDto animalDto = AnimalUtil.createAnimalDto();
-		animalDto.setLabel("ophiophagus-hannah");
+		Animal animal = AnimalUtil.createAnimalDomain();
+		animal.setLabel("ophiophagus-hannah");
+		
+		AnimalDto animalDto = AnimalUtil.animalDto(animal).build();
 		
 		String json = objectMapper.writeValueAsString(animalDto);
 		
@@ -107,30 +109,30 @@ public class TestIntegration {
 				.andExpect(status().isCreated())
 				.andExpect(MockMvcResultMatchers.jsonPath("$").hasJsonPath())
 				.andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.label").value(animalDto.getLabel()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.popularNames[0]").value(animalDto.getPopularNames().get(0)))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.conservationState").value(animalDto.getConservationState().name()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.antivenom").value(animalDto.getAntivenom()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.etymology").value(animalDto.getEtymology()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.venomous").value(animalDto.getVenomous()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.canCauseSeriousAccident").value(animalDto.getCanCauseSeriousAccident()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.species").value(animalDto.getSpecies()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.family").value(animalDto.getFamily()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.genre").value(animalDto.getGenre()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.dentition").value(animalDto.getDentition()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.habitat").value(animalDto.getHabitat()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.urlImage").value(animalDto.getUrlImage()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.characteristics").value(animalDto.getCharacteristics()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.accidentSymptom").value(animalDto.getAccidentSymptom()));
+				.andExpect(MockMvcResultMatchers.jsonPath("$.label").value(animalDto.label()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.popularNames[0]").value(animalDto.popularNames().get(0)))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.conservationState").value(animalDto.conservationState().name()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.antivenom").value(animalDto.antivenom()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.etymology").value(animalDto.etymology()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.venomous").value(animalDto.venomous()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.canCauseSeriousAccident").value(animalDto.canCauseSeriousAccident()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.species").value(animalDto.species()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.family").value(animalDto.family()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.genre").value(animalDto.genre()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.dentition").value(animalDto.dentition()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.habitat").value(animalDto.habitat()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.urlImage").value(animalDto.urlImage()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.characteristics").value(animalDto.characteristics()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.accidentSymptom").value(animalDto.accidentSymptom()));
 	}
 	
 	@Test
 	void mustNotCreateAnimalWhenCnnDoesNotRecognizeLabel() throws Exception {
 		
-		AnimalDto animalDto = AnimalUtil.createAnimalDto();
-		animalDto.setLabel("XXX");
+		Animal animal = AnimalUtil.createAnimalDomain();
+		animal.setLabel("XXX");
 		
-		String json = objectMapper.writeValueAsString(animalDto);
+		String json = objectMapper.writeValueAsString(AnimalUtil.animalDto(animal).build());
 		
 		mockMvc.perform(MockMvcRequestBuilders.post("/api/animal/create").content(json)
 				.contentType(MediaType.APPLICATION_JSON_VALUE).header(headerName, headerValues))
@@ -144,10 +146,10 @@ public class TestIntegration {
 	@Test
 	void mustNotBreedAnimalWhenLabelIsRegistered() throws Exception {
 		
-		AnimalDto animalDto = AnimalUtil.createAnimalDto();
-		animalDto.setLabel("dendroaspis-polylepis");
+		Animal animal = AnimalUtil.createAnimalDomain();
+		animal.setLabel("dendroaspis-polylepis");
 		
-		String json = objectMapper.writeValueAsString(animalDto);
+		String json = objectMapper.writeValueAsString(AnimalUtil.animalDto(animal).build());
 		
 		mockMvc.perform(MockMvcRequestBuilders.post("/api/animal/create").content(json)
 				.contentType(MediaType.APPLICATION_JSON_VALUE).header(headerName, headerValues))
@@ -160,11 +162,14 @@ public class TestIntegration {
 	@Test
 	void mustNotBreedArachnidTypeAnimalWhenDentitionIsDefined() throws Exception {
 	 
-		AnimalDto animalDto = AnimalUtil.createAnimalDto();
-		animalDto.setLabel("theraphosa-blondi");
-		animalDto.setTypeOfAnimal(TypeOfAnimal.ARACHNID);
-		 
-		String json = objectMapper.writeValueAsString(animalDto);
+		Animal animal = AnimalUtil.createAnimalDomain();
+		animal.setLabel("theraphosa-blondi");
+		String dentition = animal.getDentition();
+		animal.setDentition(null);
+		animal.setTypeOfAnimal(TypeOfAnimal.ARACHNID);
+		animal.setDentition(dentition);
+		
+		String json = objectMapper.writeValueAsString(AnimalUtil.animalDto(animal).build());
 		
 		mockMvc.perform(MockMvcRequestBuilders.post("/api/animal/create").content(json)
 				.contentType(MediaType.APPLICATION_JSON_VALUE).header(headerName, headerValues))
@@ -184,23 +189,26 @@ public class TestIntegration {
 		
 		animal = animalRepository.save(animal);
 		
-		AnimalDto animalDto = new AnimalBuilder().toAnimalDto(animal);
-		animalDto.setPopularNames(Arrays.asList("popular edit"));
-		animalDto.setConservationState(ConservationState.DD);
-		animalDto.setAntivenom("antivenom edit");
-		animalDto.setEtymology("etymology edit");
-		animalDto.setVenomous(false);
-		animalDto.setCanCauseSeriousAccident(false);
-		animalDto.setSpecies("species edit");
-		animalDto.setFamily("family edit");
-		animalDto.setGenre("genre edit");
-		animalDto.setDentition("dentition edit");
-		animalDto.setHabitat("habitat edit");
-		animalDto.setCharacteristics("characteristics edit");
-		animalDto.setTypeOfAnimal(TypeOfAnimal.SNAKE);
-		animalDto.setAccidentSymptom("accidentSymptom edit");
-		animalDto.setUrlImage("http://localhost:80");
+		animal.setPopularNames(Arrays.asList("popular edit"));
+		animal.setConservationState(ConservationState.DD);
+		animal.setAntivenom("antivenom edit");
+		animal.setEtymology("etymology edit");
+		animal.setVenomous(false);
+		animal.setCanCauseSeriousAccident(false);
+		animal.setSpecies("species edit");
+		animal.setFamily("family edit");
+		animal.setGenre("genre edit");
+		animal.setDentition("dentition edit");
+		animal.setHabitat("habitat edit");
+		animal.setCharacteristics("characteristics edit");
+		animal.setTypeOfAnimal(TypeOfAnimal.SNAKE);
+		AccidentSymptom accidentSymptom = animal.getAccidentSymptom();
+		accidentSymptom.setDescription("accidentSymptom edit");
+		animal.setAccidentSymptom(accidentSymptom);
+		animal.setUrlImage("http://localhost:80");
 	
+		AnimalDto animalDto = AnimalUtil.animalDto(animal).build();
+		
 		String json = objectMapper.writeValueAsString(animalDto);
 		
 		mockMvc.perform(MockMvcRequestBuilders.put("/api/animal/update").content(json)
@@ -208,21 +216,21 @@ public class TestIntegration {
 				.andExpect(status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$").hasJsonPath())
 				.andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.label").value(animalDto.getLabel()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.popularNames[0]").value(animalDto.getPopularNames().get(0)))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.conservationState").value(animalDto.getConservationState().name()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.antivenom").value(animalDto.getAntivenom()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.etymology").value(animalDto.getEtymology()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.venomous").value(animalDto.getVenomous()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.canCauseSeriousAccident").value(animalDto.getCanCauseSeriousAccident()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.species").value(animalDto.getSpecies()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.family").value(animalDto.getFamily()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.genre").value(animalDto.getGenre()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.dentition").value(animalDto.getDentition()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.habitat").value(animalDto.getHabitat()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.urlImage").value(animalDto.getUrlImage()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.characteristics").value(animalDto.getCharacteristics()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.accidentSymptom").value(animalDto.getAccidentSymptom()));
+				.andExpect(MockMvcResultMatchers.jsonPath("$.label").value(animalDto.label()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.popularNames[0]").value(animalDto.popularNames().get(0)))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.conservationState").value(animalDto.conservationState().name()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.antivenom").value(animalDto.antivenom()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.etymology").value(animalDto.etymology()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.venomous").value(animalDto.venomous()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.canCauseSeriousAccident").value(animalDto.canCauseSeriousAccident()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.species").value(animalDto.species()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.family").value(animalDto.family()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.genre").value(animalDto.genre()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.dentition").value(animalDto.dentition()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.habitat").value(animalDto.habitat()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.urlImage").value(animalDto.urlImage()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.characteristics").value(animalDto.characteristics()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.accidentSymptom").value(animalDto.accidentSymptom()));
 	}
 	
 	@Test
@@ -230,11 +238,8 @@ public class TestIntegration {
 		
 		final String message = "Id não pode ser null ou vazio";
 		
-		AnimalDto animalDto = AnimalUtil.createAnimalDto();
-		animalDto.setId(null);
-		
-		String json = objectMapper.writeValueAsString(animalDto);
-		
+		String json = objectMapper.writeValueAsString(AnimalUtil.animalDto(AnimalUtil.createAnimalDomain()).build());
+
 		mockMvc.perform(MockMvcRequestBuilders.put("/api/animal/update").content(json)
 				.contentType(MediaType.APPLICATION_JSON_VALUE).header(headerName, headerValues))
 				.andExpect(status().isBadRequest())
@@ -250,10 +255,10 @@ public class TestIntegration {
 		final String id = "XXXX9999";
 		final String messsage ="Nenhum animal encontrado com o id: "+id;
 		
-		AnimalDto animalDto = AnimalUtil.createAnimalDto();
-		animalDto.setId(id);
-		
-		String json = objectMapper.writeValueAsString(animalDto);
+		Animal animal = AnimalUtil.createAnimalDomain();
+		animal.setId(id);
+		 
+		String json = objectMapper.writeValueAsString(AnimalUtil.animalDto(animal).build());
 		
 		mockMvc.perform(MockMvcRequestBuilders.put("/api/animal/update").content(json)
 				.contentType(MediaType.APPLICATION_JSON_VALUE).header(headerName, headerValues))
@@ -280,21 +285,21 @@ public class TestIntegration {
 		mockMvc.perform(MockMvcRequestBuilders.multipart(router).file(file)).andExpect(status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$").hasJsonPath())
 				.andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.label").value(animalInfo.getLabel()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.popularNames").value(animalInfo.getPopularNames()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.conservationState").value(animalInfo.getConservationState()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.antivenom").value(animalInfo.getAntivenom()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.etymology").value(animalInfo.getEtymology()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.venomous").value(animalInfo.getVenomous()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.canCauseSeriousAccident").value(animalInfo.getCanCauseSeriousAccident()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.species").value(animalInfo.getSpecies()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.family").value(animalInfo.getFamily()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.genre").value(animalInfo.getGenre()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.dentition").value(animalInfo.getDentition()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.habitat").value(animalInfo.getHabitat()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.urlImage").value(animalInfo.getUrlImage()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.characteristics").value(animalInfo.getCharacteristics()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.accidentSymptom").value(animalInfo.getAccidentSymptom()));
+				.andExpect(MockMvcResultMatchers.jsonPath("$.label").value(animalInfo.label()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.popularNames").value(animalInfo.popularNames()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.conservationState").value(animalInfo.conservationState()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.antivenom").value(animalInfo.antivenom()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.etymology").value(animalInfo.etymology()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.venomous").value(animalInfo.venomous()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.canCauseSeriousAccident").value(animalInfo.canCauseSeriousAccident()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.species").value(animalInfo.species()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.family").value(animalInfo.family()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.genre").value(animalInfo.genre()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.dentition").value(animalInfo.dentition()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.habitat").value(animalInfo.habitat()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.urlImage").value(animalInfo.urlImage()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.characteristics").value(animalInfo.characteristics()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.accidentSymptom").value(animalInfo.accidentSymptom()));
 	}
 
 	@Test
@@ -306,21 +311,21 @@ public class TestIntegration {
 				.andExpect(status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$").hasJsonPath())
 				.andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.label").value(animalInfo.getLabel()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.popularNames").value(animalInfo.getPopularNames()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.conservationState").value(animalInfo.getConservationState()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.antivenom").value(animalInfo.getAntivenom()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.etymology").value(animalInfo.getEtymology()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.venomous").value(animalInfo.getVenomous()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.canCauseSeriousAccident").value(animalInfo.getCanCauseSeriousAccident()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.species").value(animalInfo.getSpecies()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.family").value(animalInfo.getFamily()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.genre").value(animalInfo.getGenre()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.dentition").value(animalInfo.getDentition()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.habitat").value(animalInfo.getHabitat()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.urlImage").value(animalInfo.getUrlImage()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.characteristics").value(animalInfo.getCharacteristics()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.accidentSymptom").value(animalInfo.getAccidentSymptom()));
+				.andExpect(MockMvcResultMatchers.jsonPath("$.label").value(animalInfo.label()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.popularNames").value(animalInfo.popularNames()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.conservationState").value(animalInfo.conservationState()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.antivenom").value(animalInfo.antivenom()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.etymology").value(animalInfo.etymology()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.venomous").value(animalInfo.venomous()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.canCauseSeriousAccident").value(animalInfo.canCauseSeriousAccident()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.species").value(animalInfo.species()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.family").value(animalInfo.family()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.genre").value(animalInfo.genre()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.dentition").value(animalInfo.dentition()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.habitat").value(animalInfo.habitat()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.urlImage").value(animalInfo.urlImage()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.characteristics").value(animalInfo.characteristics()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.accidentSymptom").value(animalInfo.accidentSymptom()));
 	}
 
 	@Test

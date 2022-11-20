@@ -17,8 +17,8 @@ public class AutenticacaoTokenService {
 	
 	public TokenDTO authenticate(LoginFormDTO loginForm, AuthenticationManager authManager) {
 		
-		UsernamePasswordAuthenticationToken dadosLogin = new UsernamePasswordAuthenticationToken(loginForm.getLogin(),
-				loginForm.getPassword());
+		UsernamePasswordAuthenticationToken dadosLogin = new UsernamePasswordAuthenticationToken(loginForm.login(),
+				loginForm.password());
 		
 		Authentication authentication = authManager.authenticate(dadosLogin);
 		

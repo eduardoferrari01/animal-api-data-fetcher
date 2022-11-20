@@ -63,25 +63,25 @@ public class AnimalServiceTest {
 		
 		when(animalRepository.save(Mockito.any())).thenReturn(returnOfTheSave);
 
-		AnimalDto animalDto = animalService.createNewAnimal(AnimalUtil.createAnimalDto());
+		AnimalDto animalDto = animalService.createNewAnimal(AnimalUtil.animalDto().build());
 
 		verify(cnnApi).existLabel(label);
 		verify(animalRepository).existsAnimalByLabel(label);
 		verify(animalRepository).save(Mockito.any(Animal.class));
 
 		Assertions.assertNotNull(animalDto);
-		Assertions.assertNotNull(animalDto.getId());
-		Assertions.assertFalse(animalDto.getId().isEmpty());
-		Assertions.assertEquals(returnOfTheSave.getAccidentSymptom().getDescription(), animalDto.getAccidentSymptom());
-		Assertions.assertEquals(returnOfTheSave.getAntivenom(), animalDto.getAntivenom());
-		Assertions.assertEquals(returnOfTheSave.getCharacteristics(), animalDto.getCharacteristics());
-		Assertions.assertEquals(returnOfTheSave.getConservationState(), animalDto.getConservationState());
-		Assertions.assertEquals(returnOfTheSave.getEtymology(), animalDto.getEtymology());
-		Assertions.assertEquals(returnOfTheSave.getGenre(), animalDto.getGenre());
-		Assertions.assertEquals(returnOfTheSave.getSpecies(), animalDto.getSpecies());
-		Assertions.assertEquals(returnOfTheSave.getUrlImage(), animalDto.getUrlImage());
-		Assertions.assertEquals(returnOfTheSave.getVenomous(), animalDto.getVenomous());
-		Assertions.assertEquals(returnOfTheSave.getPopularNames(), animalDto.getPopularNames());
+		Assertions.assertNotNull(animalDto.id());
+		Assertions.assertFalse(animalDto.id().isEmpty());
+		Assertions.assertEquals(returnOfTheSave.getAccidentSymptom().getDescription(), animalDto.accidentSymptom());
+		Assertions.assertEquals(returnOfTheSave.getAntivenom(), animalDto.antivenom());
+		Assertions.assertEquals(returnOfTheSave.getCharacteristics(), animalDto.characteristics());
+		Assertions.assertEquals(returnOfTheSave.getConservationState(), animalDto.conservationState());
+		Assertions.assertEquals(returnOfTheSave.getEtymology(), animalDto.etymology());
+		Assertions.assertEquals(returnOfTheSave.getGenre(), animalDto.genre());
+		Assertions.assertEquals(returnOfTheSave.getSpecies(), animalDto.species());
+		Assertions.assertEquals(returnOfTheSave.getUrlImage(), animalDto.urlImage());
+		Assertions.assertEquals(returnOfTheSave.getVenomous(), animalDto.venomous());
+		Assertions.assertEquals(returnOfTheSave.getPopularNames(), animalDto.popularNames());
 	}
 	
 	@Test
@@ -97,14 +97,15 @@ public class AnimalServiceTest {
 		
 		when(animalRepository.save(Mockito.any())).thenReturn(returnOfTheSave);
 
-		AnimalDto animal = AnimalUtil.createAnimalDto();
+		Animal animal = AnimalUtil.createAnimalDomain();
 		animal.setDentition(null);
 		animal.setTypeOfAnimal(TypeOfAnimal.ARACHNID);
 		
-		animalService.createNewAnimal(animal);
+		animalService.createNewAnimal(AnimalUtil.animalDto(animal).build());
 		
 		animal.setDentition("");
-		animalService.createNewAnimal(animal);
+		
+		animalService.createNewAnimal(AnimalUtil.animalDto(animal).build());
 	}
 	
 	@Test
@@ -113,7 +114,7 @@ public class AnimalServiceTest {
 		when(cnnApi.existLabel(label)).thenReturn(Boolean.FALSE);
 		
 		RuleException ruleCnn = assertThrows(RuleException.class, () -> {
-			animalService.createNewAnimal(AnimalUtil.createAnimalDto());
+			animalService.createNewAnimal(AnimalUtil.animalDto().build());
 		});
 		
 		Assertions.assertEquals("Cnn não reconhece a label: " + label, ruleCnn.getMessage());
@@ -127,7 +128,7 @@ public class AnimalServiceTest {
 		when(animalRepository.existsAnimalByLabel(label)).thenReturn(Boolean.TRUE);
 		
 		RuleException ruleExistLabel = assertThrows(RuleException.class, () -> {
-			animalService.createNewAnimal(AnimalUtil.createAnimalDto());
+			animalService.createNewAnimal(AnimalUtil.animalDto().build());
 		});
 		
 		Assertions.assertEquals("Label já cadastrada", ruleExistLabel.getMessage());
@@ -139,11 +140,14 @@ public class AnimalServiceTest {
 		when(cnnApi.existLabel(label)).thenReturn(Boolean.TRUE);
 		when(animalRepository.existsAnimalByLabel(label)).thenReturn(Boolean.FALSE);
 		
-		AnimalDto  animal = AnimalUtil.createAnimalDto();
+		Animal animal = AnimalUtil.createAnimalDomain();
+		String dentition = animal.getDentition();
+		animal.setDentition(null);
 		animal.setTypeOfAnimal(Animal.TypeOfAnimal.ARACHNID);
+		animal.setDentition(dentition);
 		
 		RuleException rule = assertThrows(RuleException.class, () -> {
-			 animalService.createNewAnimal(animal);
+			 animalService.createNewAnimal(AnimalUtil.animalDto(animal).build());
 		});
 		
 		Assertions.assertEquals("Aracnídeo não pode ter dentição definida", rule.getMessage());
@@ -155,23 +159,23 @@ public class AnimalServiceTest {
 		when(animalRepository.findById(AnimalUtil.getId())).thenReturn(Optional.of(AnimalUtil.createAnimalDomainWithId()));
 		when(animalRepository.save(Mockito.any())).thenReturn(AnimalUtil.createAnimalDomainWithId());
 		
-		AnimalDto animalReturn = animalService.update(AnimalUtil.createAnimalDtoWithId());
+		AnimalDto animalReturn = animalService.update(AnimalUtil.animalDto(AnimalUtil.createAnimalDomainWithId()).build());
 		
 		Animal animalExpected = AnimalUtil.createAnimalDomainWithId();
 		
 		Assertions.assertNotNull(animalExpected);
 		Assertions.assertNotNull(animalExpected.getId());
 		Assertions.assertFalse(animalExpected.getId().isEmpty());
-		Assertions.assertEquals(animalExpected.getAccidentSymptom().getDescription(), animalReturn.getAccidentSymptom());
-		Assertions.assertEquals(animalExpected.getAntivenom(), animalReturn.getAntivenom());
-		Assertions.assertEquals(animalExpected.getCharacteristics(), animalReturn.getCharacteristics());
-		Assertions.assertEquals(animalExpected.getConservationState(), animalReturn.getConservationState());
-		Assertions.assertEquals(animalExpected.getEtymology(), animalReturn.getEtymology());
-		Assertions.assertEquals(animalExpected.getGenre(), animalReturn.getGenre());
-		Assertions.assertEquals(animalExpected.getSpecies(), animalReturn.getSpecies());
-		Assertions.assertEquals(animalExpected.getUrlImage(), animalReturn.getUrlImage());
-		Assertions.assertEquals(animalExpected.getVenomous(), animalReturn.getVenomous());
-		Assertions.assertEquals(animalExpected.getPopularNames(), animalReturn.getPopularNames());
+		Assertions.assertEquals(animalExpected.getAccidentSymptom().getDescription(), animalReturn.accidentSymptom());
+		Assertions.assertEquals(animalExpected.getAntivenom(), animalReturn.antivenom());
+		Assertions.assertEquals(animalExpected.getCharacteristics(), animalReturn.characteristics());
+		Assertions.assertEquals(animalExpected.getConservationState(), animalReturn.conservationState());
+		Assertions.assertEquals(animalExpected.getEtymology(), animalReturn.etymology());
+		Assertions.assertEquals(animalExpected.getGenre(), animalReturn.genre());
+		Assertions.assertEquals(animalExpected.getSpecies(), animalReturn.species());
+		Assertions.assertEquals(animalExpected.getUrlImage(), animalReturn.urlImage());
+		Assertions.assertEquals(animalExpected.getVenomous(), animalReturn.venomous());
+		Assertions.assertEquals(animalExpected.getPopularNames(), animalReturn.popularNames());
 		
 		verify(animalRepository).save(Mockito.any(Animal.class));
 		verify(animalRepository).findById(AnimalUtil.getId());
@@ -183,17 +187,17 @@ public class AnimalServiceTest {
 		final String message = "Id não pode ser null ou vazio";
 		
 		RuleException ruleNull = assertThrows(RuleException.class, () -> {
-			animalService.update(AnimalUtil.createAnimalDto());
+			animalService.update(AnimalUtil.animalDto().build());
 		});
 		
 		Assertions.assertEquals(message, ruleNull.getMessage());
 		
 		RuleException ruleEmpty = assertThrows(RuleException.class, () -> {
 			
-			AnimalDto animal = AnimalUtil.createAnimalDto();
+			Animal animal = AnimalUtil.createAnimalDomain();
 			animal.setId("");
 			
-			animalService.update(animal);
+			animalService.update(AnimalUtil.animalDto(animal).build());
 		});
 		
 		Assertions.assertEquals(message, ruleEmpty.getMessage());
@@ -203,7 +207,8 @@ public class AnimalServiceTest {
 	void mustThrowNotFoundExceptionWhenIdDoesNotExistInEdit(){
 		
 		NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> {
-			animalService.update(AnimalUtil.createAnimalDtoWithId());
+			
+			animalService.update(AnimalUtil.animalDto(AnimalUtil.createAnimalDomainWithId()).build());
 		});
 		
 		Assertions.assertEquals("Nenhum animal encontrado com o id: "+ AnimalUtil.getId(), notFoundException.getMessage());
@@ -218,17 +223,17 @@ public class AnimalServiceTest {
 		verify(animalRepository).findByLabel(label);
 		
 		Assertions.assertNotNull(animalInfo);
-		Assertions.assertEquals(animal.getAccidentSymptom().getDescription(), animalInfo.getAccidentSymptom());
-		Assertions.assertEquals(animal.getAntivenom(), animalInfo.getAntivenom());
-		Assertions.assertEquals(animal.getCharacteristics(), animalInfo.getCharacteristics());
-		Assertions.assertEquals(animal.getConservationState().getLabel(), animalInfo.getConservationState());
-		Assertions.assertEquals(animal.getEtymology(), animalInfo.getEtymology());
-		Assertions.assertEquals(animal.getGenre(), animalInfo.getGenre());
-		Assertions.assertEquals(animal.getSpecies(), animalInfo.getSpecies());
-		Assertions.assertEquals(animal.getUrlImage(), animalInfo.getUrlImage());
-		Assertions.assertEquals(animal.getVenomous() ? "Sim" : "Não", animalInfo.getVenomous());
+		Assertions.assertEquals(animal.getAccidentSymptom().getDescription(), animalInfo.accidentSymptom());
+		Assertions.assertEquals(animal.getAntivenom(), animalInfo.antivenom());
+		Assertions.assertEquals(animal.getCharacteristics(), animalInfo.characteristics());
+		Assertions.assertEquals(animal.getConservationState().getLabel(), animalInfo.conservationState());
+		Assertions.assertEquals(animal.getEtymology(), animalInfo.etymology());
+		Assertions.assertEquals(animal.getGenre(), animalInfo.genre());
+		Assertions.assertEquals(animal.getSpecies(), animalInfo.species());
+		Assertions.assertEquals(animal.getUrlImage(), animalInfo.urlImage());
+		Assertions.assertEquals(animal.getVenomous() ? "Sim" : "Não", animalInfo.venomous());
 		String popularNames = String.join(", ", animal.getPopularNames());
-		Assertions.assertEquals(popularNames, animalInfo.getPopularNames());
+		Assertions.assertEquals(popularNames, animalInfo.popularNames());
 	}
 	
 	@Test
@@ -284,8 +289,8 @@ public class AnimalServiceTest {
 		Assertions.assertTrue(page.getSort().isSorted());
 		
 		AnimalShort animalShort = page.getContent().get(0);
-		Assertions.assertEquals(AnimalUtil.getId(), animalShort.getId());
-		Assertions.assertEquals(AnimalUtil.getLabel(), animalShort.getLabel());
+		Assertions.assertEquals(AnimalUtil.getId(), animalShort.id());
+		Assertions.assertEquals(AnimalUtil.getLabel(), animalShort.label());
 	
 	}
 }

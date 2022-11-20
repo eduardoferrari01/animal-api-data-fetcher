@@ -33,13 +33,13 @@ public class AnimalService {
 	@CacheEvict(value = {"animals", "animals-short"} , allEntries = true)
 	public AnimalDto createNewAnimal(AnimalDto dto) {
 		
-		boolean cnnRecognizesLabel = cnnApi.existLabel(dto.getLabel());
+		boolean cnnRecognizesLabel = cnnApi.existLabel(dto.label());
 		
 		if(!cnnRecognizesLabel) {
-			throw new RuleException("Cnn não reconhece a label: " + dto.getLabel());
+			throw new RuleException("Cnn não reconhece a label: " + dto.label());
 		}
 		
-		boolean labelExist = animalRepository.existsAnimalByLabel(dto.getLabel());
+		boolean labelExist = animalRepository.existsAnimalByLabel(dto.label());
 		
 		if(labelExist) {
 			throw new RuleException("Label já cadastrada");
@@ -58,12 +58,12 @@ public class AnimalService {
 	@CacheEvict(value = {"animals", "animals-short"} , allEntries = true)
 	public AnimalDto update(AnimalDto dto) {
 		
-		if(dto.getId() == null || dto.getId().isBlank()) {
+		if(dto.id() == null || dto.id().isBlank()) {
 			
 			throw new RuleException("Id não pode ser null ou vazio");
 		}
 		
-		Optional<Animal> foundAnimal = animalRepository.findById(dto.getId());
+		Optional<Animal> foundAnimal = animalRepository.findById(dto.id());
 		
 		if(foundAnimal.isPresent()) {
 			
@@ -77,7 +77,7 @@ public class AnimalService {
 		
 		}else {
 			
-			throw new NotFoundException("Nenhum animal encontrado com o id: "+ dto.getId());
+			throw new NotFoundException("Nenhum animal encontrado com o id: "+ dto.id());
 		}
 		
 	}
