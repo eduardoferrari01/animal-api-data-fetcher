@@ -26,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import br.com.animal.api.dto.AnimalDto;
 import br.com.animal.api.dto.AnimalInfo;
 import br.com.animal.api.dto.AnimalShort;
-import br.com.animal.api.integration.CnnApi;
 import br.com.animal.api.service.AnimalService;
 
 @RestController
@@ -36,8 +35,6 @@ public class AnimalController implements AnimalSwagger {
 	@Autowired
 	private AnimalService animalService;
 	private static final Logger LOG = LoggerFactory.getLogger(AnimalController.class);
-	@Autowired
-	private CnnApi cnnApi;
 	
 	@PostMapping(value = "/create")
 	public ResponseEntity<AnimalDto> create(@RequestBody AnimalDto dto){
