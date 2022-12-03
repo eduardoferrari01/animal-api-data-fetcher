@@ -1,5 +1,6 @@
 package br.com.animal.api.repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -26,22 +27,24 @@ public class AnimalDALRepository implements AnimalDAL {
 		Query query = new Query().with(pagination);
 
 		if (description != null) {
- 
-		 Criteria nameCriteria = new Criteria().orOperator(
+
+			Criteria nameCriteria = new Criteria().orOperator(
 					Criteria.where("label").regex(Pattern.compile(description, Pattern.CASE_INSENSITIVE)),
 					Criteria.where("family").regex(Pattern.compile(description, Pattern.CASE_INSENSITIVE)),
 					Criteria.where("genre").regex(Pattern.compile(description, Pattern.CASE_INSENSITIVE)),
 					Criteria.where("species").regex(Pattern.compile(description, Pattern.CASE_INSENSITIVE)),
 					Criteria.where("popularNames").regex(Pattern.compile(description, Pattern.CASE_INSENSITIVE)));
-		 	
-		 query.addCriteria(nameCriteria);
+
+			query.addCriteria(nameCriteria);
+
+			List<Animal> animais = mongoTemplate.find(query, Animal.class);
+
+			long count = mongoTemplate.count(query, Animal.class);
+
+			return new PageImpl<Animal>(animais, pagination, count);
 		}
 
-		List<Animal> animais =  mongoTemplate.find(query, Animal.class );
-		
-		long count = mongoTemplate.count(query, Animal.class);
-		
-		return new PageImpl<Animal>(animais , pagination, count);
+		return  Page.empty();
 	
 	}
 
