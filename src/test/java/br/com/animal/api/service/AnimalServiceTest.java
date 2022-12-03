@@ -330,7 +330,7 @@ public class AnimalServiceTest {
 	}
 	
 	@Test
-	void teste() throws IOException {
+	void whenPassingImageMustReturnAnimal() throws IOException {
 		
 		IntegrationResponse response = new IntegrationResponse();
 		response.setLabel(animal.getLabel());
