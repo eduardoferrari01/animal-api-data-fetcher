@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import br.com.animal.api.builder.AnimalBuilder;
 import br.com.animal.api.domain.Animal;
@@ -96,6 +98,18 @@ public class AnimalService {
 
 		Page<Animal> animals = animalDAL.findAnimalByDescription(pagination, description);
 		return animals.map(AnimalBuilder::toAnimalShort);
+	}
+	
+	public AnimalInfo findInfoByImage(MultipartFile file) {
+
+		if (MediaType.IMAGE_JPEG_VALUE.equals(file.getContentType())
+				|| MediaType.IMAGE_PNG_VALUE.equals(file.getContentType())) {
+
+			String label = cnnApi.classify(file).getLabel();
+			return findInfoByLabel(label);
+		}
+		throw new RuleException("O tipo "+file.getContentType()+" é inválido");
+
 	}
 	
 	public AnimalInfo findInfoByLabel(String label) {

@@ -78,8 +78,7 @@ public class AnimalController implements AnimalSwagger {
 	public ResponseEntity<AnimalInfo> information(@RequestParam("file") MultipartFile file) throws IOException {
 
 		    LOG.info("Image received {}", file.getOriginalFilename());
-		    String label = cnnApi.classify(file).getLabel();
-			AnimalInfo animalInfo = animalService.findInfoByLabel(label);
+		    AnimalInfo animalInfo = animalService.findInfoByImage(file);
 			LOG.info("Reply sent to customer");
 			return ResponseEntity.ok(animalInfo);
 	}
