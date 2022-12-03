@@ -383,5 +383,26 @@ public class TestIntegration {
 				.andExpect(MockMvcResultMatchers.jsonPath("$.size").value(15))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.number").value(0));
 	 }
+	
+	@Test
+	void whenPassingDescriptionItMustReturnAnimal() throws Exception {
 
+		Animal animal = animalRepository.findAll().stream().findFirst().get();
+		
+		String id = animal.getId();
+		String label = animal.getLabel();
+		String genre = animal.getGenre();
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/animal/find/description/"+genre+"?page=0&size=15&sort=label")
+				.header(headerName, headerValues))
+				.andExpect(status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$").hasJsonPath())
+				.andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[0].id").value(id))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[0].label").value(label))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.totalPages").value(1))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.sort.sorted").value(true))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.size").value(15))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.number").value(0));
+	}
+	
 }

@@ -45,7 +45,13 @@ public interface AnimalSwagger {
 			@ApiResponse(responseCode = "403", description = "Não autorizado"),
 			@ApiResponse(responseCode = "500", description = "Ocorreu um erro inesperado") })
 	ResponseEntity<Page<AnimalShort>> list(Pageable pagination);
-
+	
+	@SecurityRequirement(name = name)
+	@Operation(summary = "Busca animais por descrição", responses = {
+			@ApiResponse(responseCode = "200", description = "Encontrou animal"),
+			@ApiResponse(responseCode = "500", description = "Ocorreu um erro inesperado")})
+	ResponseEntity<Page<AnimalShort>> findAnimalByDescription(Pageable pagination, String description);
+	
 	@Operation(summary = "Classifica o animal", responses = {
 			@ApiResponse(responseCode = "200", description = "Classificou"),
 			@ApiResponse(responseCode = "404", description = "Animal não encontrado"),
@@ -66,5 +72,5 @@ public interface AnimalSwagger {
 			@ApiResponse(responseCode = "500", description = "Ocorreu um erro inesperado"),
 			@ApiResponse(responseCode = "502", description = "Não foi possivel conectar com o serviço de classificação")})
 	ResponseEntity<List<String>> findLabelsAvailableToRegister();
-
+	
 }

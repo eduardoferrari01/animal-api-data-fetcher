@@ -30,6 +30,7 @@ import br.com.animal.api.dto.AnimalShort;
 import br.com.animal.api.exception.NotFoundException;
 import br.com.animal.api.exception.RuleException;
 import br.com.animal.api.integration.CnnApiProd;
+import br.com.animal.api.repository.AnimalDAL;
 import br.com.animal.api.repository.AnimalRepository;
 import br.com.animal.api.util.AnimalUtil;
 
@@ -44,6 +45,8 @@ public class AnimalServiceTest {
 	private CnnApiProd cnnApi;
 	private static Animal animal;
 	private static String label;
+	@Mock
+	private AnimalDAL animalDAL;
 	
 	@BeforeAll
 	public static void setup() {
@@ -292,5 +295,31 @@ public class AnimalServiceTest {
 		Assertions.assertEquals(AnimalUtil.getId(), animalShort.id());
 		Assertions.assertEquals(AnimalUtil.getLabel(), animalShort.label());
 	
+	}
+	
+	@Test
+	void whenPassingDescriptionItMustReturnAnimal() {
+		
+		PageImpl<Animal> pageImpl = new PageImpl<>(Arrays.asList(AnimalUtil.createAnimalDomainWithId()), PageRequest.of(0, 10, Direction.ASC, "id"), 0);
+		
+		when(animalDAL.findAnimalByDescription(Mockito.any(Pageable.class), Mockito.anyString())).thenReturn(pageImpl);
+
+		String description = "dendroaspis";
+		
+		Page<AnimalShort> page = animalService.findAnimalByDescription(PageRequest.of(0, 10, Direction.ASC, "id"), description);
+		
+		verify(animalDAL).findAnimalByDescription(Mockito.any(Pageable.class), Mockito.anyString());
+		
+		Assertions.assertNotNull(page);
+		Assertions.assertFalse(page.isEmpty());
+		Assertions.assertEquals(0, page.getNumber());
+		Assertions.assertEquals(10, page.getSize());
+		Assertions.assertEquals(1, page.getTotalElements());
+		Assertions.assertEquals(1, page.getTotalPages());
+		Assertions.assertTrue(page.getSort().isSorted());
+		
+		AnimalShort animalShort = page.getContent().get(0);
+		Assertions.assertEquals(AnimalUtil.getId(), animalShort.id());
+		Assertions.assertEquals(AnimalUtil.getLabel(), animalShort.label());
 	}
 }

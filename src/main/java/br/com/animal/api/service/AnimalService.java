@@ -19,6 +19,7 @@ import br.com.animal.api.dto.AnimalShort;
 import br.com.animal.api.exception.NotFoundException;
 import br.com.animal.api.exception.RuleException;
 import br.com.animal.api.integration.CnnApi;
+import br.com.animal.api.repository.AnimalDAL;
 import br.com.animal.api.repository.AnimalRepository;
 
 @Service
@@ -29,7 +30,9 @@ public class AnimalService {
 	@Autowired
 	private CnnApi cnnApi;
 	private static final Logger LOG = LoggerFactory.getLogger(AnimalService.class);
-
+	@Autowired
+	private AnimalDAL animalDAL;
+	
 	@CacheEvict(value = {"animals", "animals-short"} , allEntries = true)
 	public AnimalDto createNewAnimal(AnimalDto dto) {
 		
@@ -86,6 +89,12 @@ public class AnimalService {
 		
 		Page<Animal> animals = animalRepository.findAll(pagination);
 	
+		return animals.map(AnimalBuilder::toAnimalShort);
+	}
+	
+	public Page<AnimalShort> findAnimalByDescription(Pageable pagination, String description) {
+
+		Page<Animal> animals = animalDAL.findAnimalByDescription(pagination, description);
 		return animals.map(AnimalBuilder::toAnimalShort);
 	}
 	

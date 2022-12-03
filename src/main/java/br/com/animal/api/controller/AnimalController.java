@@ -65,6 +65,15 @@ public class AnimalController implements AnimalSwagger {
 
 	}
 	
+	@GetMapping(value = "/find/description/{description}")
+	public ResponseEntity<Page<AnimalShort>> findAnimalByDescription(
+			@PageableDefault(sort = "label", direction = Direction.ASC, page = 0, size = 15) Pageable pagination,
+			@PathVariable  String description) {
+
+		Page<AnimalShort> lista = animalService.findAnimalByDescription(pagination, description);
+		return ResponseEntity.ok(lista);
+	}
+	
 	@PostMapping(value = "/information", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
 	public ResponseEntity<AnimalInfo> information(@RequestParam("file") MultipartFile file) throws IOException {
 
@@ -89,5 +98,5 @@ public class AnimalController implements AnimalSwagger {
 		List<String> labels =  animalService.findLabelsAvailableToRegister();
 		return ResponseEntity.ok(labels);
 	}
-
+	
 }
