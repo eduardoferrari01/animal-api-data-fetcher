@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -146,16 +147,18 @@ public class TestIntegration {
 	@Test
 	void mustNotBreedAnimalWhenLabelIsRegistered() throws Exception {
 		
+		String label = "dendroaspis-polylepis";
+		
 		Animal animal = AnimalUtil.createAnimalDomain();
-		animal.setLabel("dendroaspis-polylepis");
+		animal.setLabel(label);
 		
 		String json = objectMapper.writeValueAsString(AnimalUtil.animalDto(animal).build());
 		
-		mockMvc.perform(MockMvcRequestBuilders.post("/api/animal/create").content(json)
+ 		mockMvc.perform(MockMvcRequestBuilders.post("/api/animal/create").content(json)
 				.contentType(MediaType.APPLICATION_JSON_VALUE).header(headerName, headerValues))
 				.andExpect(status().isBadRequest())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.date").isNotEmpty())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Label já cadastrada"))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Label: "+label+" já cadastrada"))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.detail").value("uri=/api/animal/create"));	
 	}
 	

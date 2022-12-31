@@ -140,7 +140,7 @@ public class AnimalServiceTest {
 			animalService.createNewAnimal(AnimalUtil.animalDto().build());
 		});
 		
-		Assertions.assertEquals("Label já cadastrada", ruleExistLabel.getMessage());
+		Assertions.assertEquals("Label: "+label+" já cadastrada", ruleExistLabel.getMessage());
 	}
 	
 	@Test

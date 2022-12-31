@@ -23,6 +23,7 @@ import br.com.animal.api.exception.RuleException;
 import br.com.animal.api.integration.CnnApi;
 import br.com.animal.api.repository.AnimalDAL;
 import br.com.animal.api.repository.AnimalRepository;
+import br.com.animal.api.service.event.EventLogAfterReturning;
 
 @Service
 public class AnimalService {
@@ -35,6 +36,7 @@ public class AnimalService {
 	@Autowired
 	private AnimalDAL animalDAL;
 	
+	@EventLogAfterReturning(value = "Criar um novo animal")
 	@CacheEvict(value = {"animals", "animals-short"} , allEntries = true)
 	public AnimalDto createNewAnimal(AnimalDto dto) {
 		
@@ -47,7 +49,7 @@ public class AnimalService {
 		boolean labelExist = animalRepository.existsAnimalByLabel(dto.label());
 		
 		if(labelExist) {
-			throw new RuleException("Label já cadastrada");
+			throw new RuleException("Label: " + dto.label() + " já cadastrada");
 		}
 		
 		AnimalBuilder animalBuilder =  new AnimalBuilder();
@@ -60,6 +62,7 @@ public class AnimalService {
 		return animalBuilder.toAnimalDto(animalCreate);
 	}
 	
+	@EventLogAfterReturning(value = "Atualizar um animal")
 	@CacheEvict(value = {"animals", "animals-short"} , allEntries = true)
 	public AnimalDto update(AnimalDto dto) {
 		
@@ -87,6 +90,7 @@ public class AnimalService {
 		
 	}
 	
+	@EventLogAfterReturning(value = "Buscar animais cadastro")
 	public Page<AnimalShort> findAllShort(Pageable pagination){
 		
 		Page<Animal> animals = animalRepository.findAll(pagination);
@@ -94,12 +98,14 @@ public class AnimalService {
 		return animals.map(AnimalBuilder::toAnimalShort);
 	}
 	
+	@EventLogAfterReturning(value = "Buscar animais por descrição")
 	public Page<AnimalShort> findAnimalByDescription(Pageable pagination, String description) {
 
 		Page<Animal> animals = animalDAL.findAnimalByDescription(pagination, description);
 		return animals.map(AnimalBuilder::toAnimalShort);
 	}
 	
+	@EventLogAfterReturning(value = "Buscar informações por imagem")
 	public AnimalInfo findInfoByImage(MultipartFile file) {
 
 		if (MediaType.IMAGE_JPEG_VALUE.equals(file.getContentType())
@@ -112,6 +118,7 @@ public class AnimalService {
 
 	}
 	
+	@EventLogAfterReturning(value = "Buscar informação do animal por label")
 	public AnimalInfo findInfoByLabel(String label) {
 
 		LOG.info("Find by label: {}", label);
@@ -124,6 +131,7 @@ public class AnimalService {
 		return new AnimalBuilder().toAnimalInfo(animal);
 	}
 	
+	@EventLogAfterReturning(value = "Buscar labels disponíveis para cadastro")
 	public List<String> findLabelsAvailableToRegister(){
 		
 		LOG.info("Searching labels available for registration");
