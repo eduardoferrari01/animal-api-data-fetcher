@@ -122,9 +122,9 @@ public class AnimalService {
 	public AnimalInfo findInfoByLabel(String label) {
 
 		LOG.info("Find by label: {}", label);
-
+		
 		Animal animal = animalRepository.findByLabel(label)
-				.orElseThrow(() -> new NotFoundException("No animals were found"));
+				.orElseThrow(() -> new NotFoundException("Nenhum animal foi encontrado"));
 
 		LOG.info("{} found!!!", label);
 

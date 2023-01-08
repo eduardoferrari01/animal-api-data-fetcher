@@ -336,7 +336,7 @@ public class TestIntegration {
 
 		mockMvc.perform(MockMvcRequestBuilders.get(router + "/find/{label}", "AAA")).andExpect(status().isNotFound())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.date").isNotEmpty())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.message").value("No animals were found"))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Nenhum animal foi encontrado"))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.detail").value("uri=/api/animal/information/find/AAA"));
 
 	}

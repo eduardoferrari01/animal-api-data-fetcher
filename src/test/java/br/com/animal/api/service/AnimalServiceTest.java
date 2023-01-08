@@ -252,7 +252,7 @@ public class AnimalServiceTest {
 			animalService.findInfoByLabel(label);
 		});
 		
-		Assertions.assertEquals("No animals were found", notFoundException.getMessage());
+		Assertions.assertEquals("Nenhum animal foi encontrado", notFoundException.getMessage());
 	}
 	
 	@Test
