@@ -8,15 +8,17 @@ services:
           - db
           - cnn
         environment:
+          - 'PROFILE_ACTIVE=default'
           - 'JDBC_DATABASE_URL=mongodb://db:27017/db-animal'
-          - 'CNN_URL=http://cnn:8000/cnn/classify/'
+          - 'CNN_URL=http://cnn:8000'
+          - 'SECRET_KEY=XXXXXX'
         ports:
             - "8080:8080"
 
 
     db:
       image: mongo
-      container_name: mongo_instance_001
+      container_name: mongo_instance
       ports:
           - 27017:27017
       volumes:
