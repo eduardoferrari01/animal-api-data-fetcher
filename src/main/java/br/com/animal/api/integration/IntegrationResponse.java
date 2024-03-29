@@ -6,7 +6,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class IntegrationResponse {
 
 	private String label;
-
+	
+	public IntegrationResponse(){}
+	
+	public IntegrationResponse(String label){
+		this.label = label;
+	}
+	
 	public String getLabel() {
 		return label;
 	}

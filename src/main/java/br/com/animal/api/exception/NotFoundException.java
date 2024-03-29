@@ -1,4 +1,4 @@
-package br.com.animal.api.controller;
+package br.com.animal.api.exception;
 
 public class NotFoundException extends  RuntimeException{
 

@@ -7,9 +7,15 @@ import java.util.Objects;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import br.com.animal.api.exception.RuleException;
+
 @Document
 public class Animal implements Serializable{
 
+	public enum TypeOfAnimal {
+		ARACHNID, SNAKE
+	}
+	
 	private static final long serialVersionUID = 3651156997181600619L;
 	@Id
 	private String id;
@@ -28,7 +34,8 @@ public class Animal implements Serializable{
 	private String characteristics;
 	private AccidentSymptom accidentSymptom;
 	private String urlImage;
-	 
+	private TypeOfAnimal typeOfAnimal; 
+	
 	public String getId() {
 		return id;
 	}
@@ -128,6 +135,21 @@ public class Animal implements Serializable{
 		this.urlImage = urlImage;
 	}
 	
+	public TypeOfAnimal getTypeOfAnimal() {
+		return typeOfAnimal;
+	}
+	
+	public void setTypeOfAnimal(TypeOfAnimal typeOfAnimal) {
+		
+		if(TypeOfAnimal.ARACHNID.equals(typeOfAnimal)) {
+			
+			if(this.dentition != null && !this.dentition.isBlank()) {
+				throw new RuleException("Aracnídeo não pode ter dentição definida");
+			}
+		}
+		
+		this.typeOfAnimal = typeOfAnimal;
+	}
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
