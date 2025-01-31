@@ -3,7 +3,7 @@ services:
 
     web:
         build: .
-        container_name: animal-api_instance
+        container_name: animal-api-data-fetcher_instance
         depends_on:
           - db
           - cnn
