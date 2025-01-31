@@ -1,1 +1,1 @@
-# Animal API DATA Fetcher
+# Animal API Data Fetcher
