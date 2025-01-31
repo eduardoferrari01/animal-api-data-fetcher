@@ -17,7 +17,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.animal.api.configuration.security.AuthenticationService;
 import br.com.animal.api.domain.EventLog;
 import br.com.animal.api.repository.EventLogRepository;
 
@@ -27,9 +26,7 @@ public class EventLogService {
 
 	@Autowired
 	private EventLogRepository eventLogRepository;
-    @Autowired
-    private AuthenticationService authenticationService;
-	
+    
 	@AfterReturning(value = "@annotation(EventLogAfterReturning)", returning = "returnValue")
 	public void create(JoinPoint joinPoint, Object returnValue) {
 		
@@ -39,8 +36,7 @@ public class EventLogService {
 		eventLog.setParameters(getParameters(joinPoint));	
 		eventLog.setReturnResult(getReturn(returnValue));
 		eventLog.setCreationDateTime(LocalDateTime.now());
-		eventLog.setUser(authenticationService.getUser());
-		
+	
 		eventLogRepository.save(eventLog);
 	}
 	
@@ -52,7 +48,6 @@ public class EventLogService {
 		eventLog.setMethod(joinPoint.getSignature().getName());
 		eventLog.setParameters(getParameters(joinPoint));	
 		eventLog.setCreationDateTime(LocalDateTime.now());
-		eventLog.setUser(authenticationService.getUser());
 		
 		//error
 		eventLog.setExceptionMessage(exception.getMessage());

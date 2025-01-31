@@ -11,7 +11,6 @@ services:
           - 'PROFILE_ACTIVE=default'
           - 'JDBC_DATABASE_URL=mongodb://db:27017/db-animal'
           - 'CNN_URL=http://cnn:8000'
-          - 'SECRET_KEY=XXXXXX'
         ports:
             - "8080:8080"
 

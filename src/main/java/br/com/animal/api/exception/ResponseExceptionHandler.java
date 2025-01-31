@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,56 +16,55 @@ import feign.RetryableException;
 
 @ControllerAdvice
 @RestController
-public class ResponseExceptionHandler  extends ResponseEntityExceptionHandler{
+public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ResponseExceptionHandler.class);
-	
+
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ExceptionResponse> handleExceptions(Exception exception, WebRequest request){
-		
+	public ResponseEntity<ExceptionResponse> handleExceptions(Exception exception, WebRequest request) {
+
 		LOG.error(exception.getMessage());
-		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), "Ocorreu um erro inesperado", request.getDescription(false));
+		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), "Ocorreu um erro inesperado",
+				request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
-	
+
 	@ExceptionHandler(NotFoundException.class)
-	public ResponseEntity<ExceptionResponse> handleNotFoundException(Exception exception, WebRequest request){
-		
+	public ResponseEntity<ExceptionResponse> handleNotFoundException(Exception exception, WebRequest request) {
+
 		LOG.warn(exception.getMessage());
-		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), exception.getMessage(), request.getDescription(false));
+		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), exception.getMessage(),
+				request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
 	}
- 
+
 	@ExceptionHandler(IntegrationResponseException.class)
-	public ResponseEntity<ExceptionResponse> handleIntegrationResponseException(IntegrationResponseException exception, WebRequest request){
-		
+	public ResponseEntity<ExceptionResponse> handleIntegrationResponseException(IntegrationResponseException exception,
+			WebRequest request) {
+
 		LOG.error(exception.getMessage());
-		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), exception.getMessage(), request.getDescription(false));
+		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), exception.getMessage(),
+				request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, exception.getHttpStatus());
 	}
-	
+
 	@ExceptionHandler(RetryableException.class)
-	public ResponseEntity<ExceptionResponse> handleRetryableException(RetryableException exception, WebRequest request){
-		
+	public ResponseEntity<ExceptionResponse> handleRetryableException(RetryableException exception,
+			WebRequest request) {
+
 		LOG.warn(exception.getMessage());
-		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), exception.getMessage(), request.getDescription(false));
+		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), exception.getMessage(),
+				request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_GATEWAY);
 	}
-	
+
 	@ExceptionHandler(RuleException.class)
-	public ResponseEntity<ExceptionResponse> handleRuleException(RuleException exception, WebRequest request){
-		
+	public ResponseEntity<ExceptionResponse> handleRuleException(RuleException exception, WebRequest request) {
+
 		LOG.warn(exception.getMessage());
-		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), exception.getMessage(), request.getDescription(false));
+		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), exception.getMessage(),
+				request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
-	
-	@ExceptionHandler(BadCredentialsException.class)
-	public ResponseEntity<ExceptionResponse> handleBadCredentialsException(BadCredentialsException exception, WebRequest request){
-		
-		LOG.warn(exception.getMessage());
-		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), "Sua conta ou senha está incorreta", request.getDescription(false));
-		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
-	}
-	
+
 }
