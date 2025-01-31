@@ -1,12 +1,10 @@
 package br.com.animal.api.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -15,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.com.animal.api.builder.AnimalBuilder;
 import br.com.animal.api.domain.Animal;
-import br.com.animal.api.dto.AnimalDto;
 import br.com.animal.api.dto.AnimalInfo;
 import br.com.animal.api.dto.AnimalShort;
 import br.com.animal.api.exception.NotFoundException;
@@ -35,60 +32,6 @@ public class AnimalService {
 	private static final Logger LOG = LoggerFactory.getLogger(AnimalService.class);
 	@Autowired
 	private AnimalDAL animalDAL;
-	
-	@EventLogAfterReturning(value = "Criar um novo animal")
-	@CacheEvict(value = {"animals", "animals-short"} , allEntries = true)
-	public AnimalDto createNewAnimal(AnimalDto dto) {
-		
-		boolean cnnRecognizesLabel = cnnApi.existLabel(dto.label());
-		
-		if(!cnnRecognizesLabel) {
-			throw new RuleException("Cnn não reconhece a label: " + dto.label());
-		}
-		
-		boolean labelExist = animalRepository.existsAnimalByLabel(dto.label());
-		
-		if(labelExist) {
-			throw new RuleException("Label: " + dto.label() + " já cadastrada");
-		}
-		
-		AnimalBuilder animalBuilder =  new AnimalBuilder();
-		
-		Animal animal = animalBuilder.toAnimal(dto);
-		animal.setId(null);
-		
-		Animal animalCreate = animalRepository.save(animal);
-	
-		return animalBuilder.toAnimalDto(animalCreate);
-	}
-	
-	@EventLogAfterReturning(value = "Atualizar um animal")
-	@CacheEvict(value = {"animals", "animals-short"} , allEntries = true)
-	public AnimalDto update(AnimalDto dto) {
-		
-		if(dto.id() == null || dto.id().isBlank()) {
-			
-			throw new RuleException("Id não pode ser null ou vazio");
-		}
-		
-		Optional<Animal> foundAnimal = animalRepository.findById(dto.id());
-		
-		if(foundAnimal.isPresent()) {
-			
-			AnimalBuilder animalBuilder =  new AnimalBuilder();
-			
-			Animal editedAnimal = animalBuilder.editAnimal(dto, foundAnimal.get());
-			
-			Animal updatedAnimal = animalRepository.save(editedAnimal);
-			
-			return animalBuilder.toAnimalDto(updatedAnimal);
-		
-		}else {
-			
-			throw new NotFoundException("Nenhum animal encontrado com o id: "+ dto.id());
-		}
-		
-	}
 	
 	@EventLogAfterReturning(value = "Buscar animais cadastro")
 	public Page<AnimalShort> findAllShort(Pageable pagination){
