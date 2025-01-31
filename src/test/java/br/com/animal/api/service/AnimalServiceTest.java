@@ -27,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.com.animal.api.domain.Animal;
 import br.com.animal.api.dto.AnimalInfo;
-import br.com.animal.api.dto.AnimalShort;
 import br.com.animal.api.exception.NotFoundException;
 import br.com.animal.api.integration.CnnApiProd;
 import br.com.animal.api.integration.IntegrationResponse;
@@ -100,7 +99,7 @@ public class AnimalServiceTest {
 
 		when(animalRepository.findByLabelIn(Mockito.anyList())).thenReturn(Arrays.asList(animal1, animal2));
 
-		List<String> labels = animalService.findLabelsAvailableToRegister();
+		List<String> labels = animalService.findLabelsAvailable();
 
 		verify(cnnApi).getAllLabels();
 		verify(animalRepository).findByLabelIn(Mockito.anyList());
@@ -109,32 +108,6 @@ public class AnimalServiceTest {
 		Assertions.assertFalse(labels.isEmpty());
 		Assertions.assertEquals(2, labels.size());
 		Assertions.assertIterableEquals(Arrays.asList("label3", "label4"), labels);
-	}
-
-	@Test
-	void mustReturnAnimalShort() {
-
-		PageImpl<Animal> pageImpl = new PageImpl<>(Arrays.asList(AnimalUtil.createAnimalDomainWithId()),
-				PageRequest.of(0, 10, Direction.ASC, "id"), 0);
-
-		when(animalRepository.findAll(Mockito.any(Pageable.class))).thenReturn(pageImpl);
-
-		Page<AnimalShort> page = animalService.findAllShort(PageRequest.of(0, 10, Direction.ASC, "id"));
-
-		verify(animalRepository).findAll(Mockito.any(Pageable.class));
-
-		Assertions.assertNotNull(page);
-		Assertions.assertFalse(page.isEmpty());
-		Assertions.assertEquals(0, page.getNumber());
-		Assertions.assertEquals(10, page.getSize());
-		Assertions.assertEquals(1, page.getTotalElements());
-		Assertions.assertEquals(1, page.getTotalPages());
-		Assertions.assertTrue(page.getSort().isSorted());
-
-		AnimalShort animalShort = page.getContent().get(0);
-		Assertions.assertEquals(AnimalUtil.getId(), animalShort.id());
-		Assertions.assertEquals(AnimalUtil.getLabel(), animalShort.label());
-
 	}
 
 	@Test
@@ -147,7 +120,7 @@ public class AnimalServiceTest {
 
 		String description = "dendroaspis";
 
-		Page<AnimalShort> page = animalService.findAnimalByDescription(PageRequest.of(0, 10, Direction.ASC, "id"),
+		Page<AnimalInfo> page = animalService.findAnimalByDescription(PageRequest.of(0, 10, Direction.ASC, "id"),
 				description);
 
 		verify(animalDAL).findAnimalByDescription(Mockito.any(Pageable.class), Mockito.anyString());
@@ -160,9 +133,20 @@ public class AnimalServiceTest {
 		Assertions.assertEquals(1, page.getTotalPages());
 		Assertions.assertTrue(page.getSort().isSorted());
 
-		AnimalShort animalShort = page.getContent().get(0);
-		Assertions.assertEquals(AnimalUtil.getId(), animalShort.id());
-		Assertions.assertEquals(AnimalUtil.getLabel(), animalShort.label());
+		AnimalInfo animalInfo = page.getContent().get(0);
+		
+		Assertions.assertNotNull(animalInfo);
+		Assertions.assertEquals(animal.getAccidentSymptom().getDescription(), animalInfo.accidentSymptom());
+		Assertions.assertEquals(animal.getAntivenom(), animalInfo.antivenom());
+		Assertions.assertEquals(animal.getCharacteristics(), animalInfo.characteristics());
+		Assertions.assertEquals(animal.getConservationState().getLabel(), animalInfo.conservationState());
+		Assertions.assertEquals(animal.getEtymology(), animalInfo.etymology());
+		Assertions.assertEquals(animal.getGenre(), animalInfo.genre());
+		Assertions.assertEquals(animal.getSpecies(), animalInfo.species());
+		Assertions.assertEquals(animal.getUrlImage(), animalInfo.urlImage());
+		Assertions.assertEquals(animal.getVenomous() ? "Sim" : "Não", animalInfo.venomous());
+		String popularNames = String.join(", ", animal.getPopularNames());
+		Assertions.assertEquals(popularNames, animalInfo.popularNames());
 	}
 
 	@Test

@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.com.animal.api.dto.AnimalInfo;
-import br.com.animal.api.dto.AnimalShort;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,19 +16,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Endpoint para animal api")
 public interface AnimalSwagger {
 
-	@Operation(summary = "Lista os animais cadastro", responses = {
-			@ApiResponse(responseCode = "200", description = "Listado com sucesso"),
-			@ApiResponse(responseCode = "403", description = "Não autorizado"),
-			@ApiResponse(responseCode = "500", description = "Ocorreu um erro inesperado") })
-	ResponseEntity<Page<AnimalShort>> list(Pageable pagination);
-
 	@Operation(summary = "Busca animais por descrição", responses = {
 			@ApiResponse(responseCode = "200", description = "Encontrou animal"),
 			@ApiResponse(responseCode = "500", description = "Ocorreu um erro inesperado") })
-	ResponseEntity<Page<AnimalShort>> findAnimalByDescription(Pageable pagination, String description);
+	ResponseEntity<Page<AnimalInfo>> findAnimalByDescription(Pageable pagination, String description);
 
-	@Operation(summary = "Classifica o animal", responses = {
-			@ApiResponse(responseCode = "200", description = "Classificou"),
+	@Operation(summary = "Busca a informação do animal pela imagem", responses = {
+			@ApiResponse(responseCode = "200", description = "Encontrou a informação do animal"),
 			@ApiResponse(responseCode = "404", description = "Animal não encontrado"),
 			@ApiResponse(responseCode = "500", description = "Ocorreu um erro inesperado"),
 			@ApiResponse(responseCode = "502", description = "Não foi possivel conectar com o serviço de classificação") })
@@ -41,11 +34,11 @@ public interface AnimalSwagger {
 			@ApiResponse(responseCode = "500", description = "Ocorreu um erro inesperado") })
 	ResponseEntity<AnimalInfo> findByLabel(String label);
 
-	@Operation(summary = "Lista labels disponíveis para cadastrar", responses = {
+	@Operation(summary = "Lista labels disponíveis", responses = {
 			@ApiResponse(responseCode = "200", description = "Listado com sucesso"),
 			@ApiResponse(responseCode = "403", description = "Não autorizado"),
 			@ApiResponse(responseCode = "500", description = "Ocorreu um erro inesperado"),
 			@ApiResponse(responseCode = "502", description = "Não foi possivel conectar com o serviço de classificação") })
-	ResponseEntity<List<String>> findLabelsAvailableToRegister();
+	ResponseEntity<List<String>> findLabelsAvailable();
 
 }

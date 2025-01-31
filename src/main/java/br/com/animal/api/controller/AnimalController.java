@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.com.animal.api.dto.AnimalInfo;
-import br.com.animal.api.dto.AnimalShort;
 import br.com.animal.api.service.AnimalService;
 
 @RestController
@@ -32,22 +31,12 @@ public class AnimalController implements AnimalSwagger {
 	private AnimalService animalService;
 	private static final Logger LOG = LoggerFactory.getLogger(AnimalController.class);
 	
-	@GetMapping(value = "/list")
-	public ResponseEntity<Page<AnimalShort>> list(
-			@PageableDefault(sort = "id", direction = Direction.ASC, page = 0, size = 15) Pageable pagination) {
-
-		LOG.info("Find all animal short");
-		Page<AnimalShort> lista = animalService.findAllShort(pagination);
-		return ResponseEntity.ok(lista);
-
-	}
-	
 	@GetMapping(value = "/find/description/{description}")
-	public ResponseEntity<Page<AnimalShort>> findAnimalByDescription(
+	public ResponseEntity<Page<AnimalInfo>> findAnimalByDescription(
 			@PageableDefault(sort = "label", direction = Direction.ASC, page = 0, size = 15) Pageable pagination,
 			@PathVariable  String description) {
 
-		Page<AnimalShort> lista = animalService.findAnimalByDescription(pagination, description);
+		Page<AnimalInfo> lista = animalService.findAnimalByDescription(pagination, description);
 		return ResponseEntity.ok(lista);
 	}
 	
@@ -69,9 +58,9 @@ public class AnimalController implements AnimalSwagger {
 	}
 	
 	@GetMapping(value = "/find/labels/available")
-	public ResponseEntity<List<String>> findLabelsAvailableToRegister(){
+	public ResponseEntity<List<String>> findLabelsAvailable(){
 		
-		List<String> labels =  animalService.findLabelsAvailableToRegister();
+		List<String> labels =  animalService.findLabelsAvailable();
 		return ResponseEntity.ok(labels);
 	}
 	

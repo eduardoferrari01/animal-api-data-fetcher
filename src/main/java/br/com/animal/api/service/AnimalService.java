@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import br.com.animal.api.builder.AnimalBuilder;
 import br.com.animal.api.domain.Animal;
 import br.com.animal.api.dto.AnimalInfo;
-import br.com.animal.api.dto.AnimalShort;
 import br.com.animal.api.exception.NotFoundException;
 import br.com.animal.api.exception.RuleException;
 import br.com.animal.api.integration.CnnApi;
@@ -33,19 +32,14 @@ public class AnimalService {
 	@Autowired
 	private AnimalDAL animalDAL;
 	
-	@EventLogAfterReturning(value = "Buscar animais cadastro")
-	public Page<AnimalShort> findAllShort(Pageable pagination){
-		
-		Page<Animal> animals = animalRepository.findAll(pagination);
-	
-		return animals.map(AnimalBuilder::toAnimalShort);
-	}
-	
 	@EventLogAfterReturning(value = "Buscar animais por descrição")
-	public Page<AnimalShort> findAnimalByDescription(Pageable pagination, String description) {
+	public Page<AnimalInfo> findAnimalByDescription(Pageable pagination, String description) {
 
 		Page<Animal> animals = animalDAL.findAnimalByDescription(pagination, description);
-		return animals.map(AnimalBuilder::toAnimalShort);
+		 
+		AnimalBuilder builder =  new AnimalBuilder();
+		
+		return animals.map(builder::toAnimalInfo);
 	}
 	
 	@EventLogAfterReturning(value = "Buscar informações por imagem")
@@ -74,10 +68,10 @@ public class AnimalService {
 		return new AnimalBuilder().toAnimalInfo(animal);
 	}
 	
-	@EventLogAfterReturning(value = "Buscar labels disponíveis para cadastro")
-	public List<String> findLabelsAvailableToRegister(){
+	@EventLogAfterReturning(value = "Buscar labels disponíveis")
+	public List<String> findLabelsAvailable(){
 		
-		LOG.info("Searching labels available for registration");
+		LOG.info("Searching labels available");
 		
 		List<String> labels =  cnnApi.getAllLabels();
 		
