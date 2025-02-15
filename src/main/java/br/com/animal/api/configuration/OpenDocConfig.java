@@ -12,7 +12,7 @@ public class OpenDocConfig {
 	@Bean
 	OpenAPI customOpenAPI() {
 		return new OpenAPI()
-				.info(new Info().title("Animal API").version("1.0").description("Documentaçã do serviço de api"));
+				.info(new Info().title("Animal Info API").version("1.0").description("Documentaçã do serviço de api"));
 	}
 
 }
