@@ -1,32 +1,20 @@
-package br.com.animal.api.domain;
+package br.com.animal.api.repository.adpater.mongo;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class Animal implements Serializable {
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-	public enum ConservationState {
+import br.com.animal.api.domain.AccidentSymptom;
+import br.com.animal.api.domain.Animal.ConservationState;
+import br.com.animal.api.domain.Animal.TypeOfAnimal;
 
-		EX("Extinta"), EW("Extinta na natureza"), CR("Criticamente em perigo"), EN("Em perigo"), VU("Vulnerável"),
-		NT("Quase ameaçada"), LC("Pouco preocupante"), DD("Dados Deficientes"), NE("Não avaliada"), NI("Não informado");
+@Document(collection = "animal")
+public class AnimalDocument implements Serializable{
 
-		public final String label;
-
-		private ConservationState(String label) {
-
-			this.label = label;
-		}
-
-		public String getLabel() {
-			return this.label;
-		}
-	}
-
-	public enum TypeOfAnimal {
-		ARACHNID, SNAKE
-	}
-
-	private static final long serialVersionUID = 3651156997181600619L;
+	private static final long serialVersionUID = 3312235917906418651L;
+	@Id
 	private String id;
 	private String label;
 	private List<String> popularNames;
@@ -178,7 +166,6 @@ public class Animal implements Serializable {
 	}
 
 	public void setTypeOfAnimal(TypeOfAnimal typeOfAnimal) {
-
 		this.typeOfAnimal = typeOfAnimal;
 	}
 

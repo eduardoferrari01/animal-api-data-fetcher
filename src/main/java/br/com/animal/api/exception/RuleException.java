@@ -7,5 +7,4 @@ public class RuleException extends RuntimeException {
 	public RuleException(String msg) {
 		super(msg);
 	}
-
 }

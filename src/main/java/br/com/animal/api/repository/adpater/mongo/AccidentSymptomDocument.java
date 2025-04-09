@@ -1,15 +1,14 @@
-package br.com.animal.api.domain;
+package br.com.animal.api.repository.adpater.mongo;
 
-import java.io.Serializable;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-public class AccidentSymptom implements Serializable {
+import br.com.animal.api.domain.AccidentSymptom.TypeAccident;
 
-	public enum TypeAccident {
+@Document
+public class AccidentSymptomDocument {
 
-		BOTHROPIC, LACETIC, CROTALIC, ELIPID, ARACHNID, OTHERS, NONE
-	}
-
-	private static final long serialVersionUID = 721140409944969591L;
+	@Id
 	private String id;
 	private String description;
 	private TypeAccident typeAccident;
